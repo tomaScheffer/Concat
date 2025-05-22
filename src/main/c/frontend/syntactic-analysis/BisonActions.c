@@ -31,57 +31,82 @@ static void _logSyntacticAnalyzerAction(const char * functionName) {
 
 /* PUBLIC FUNCTIONS */
 
-Constant * IntegerConstantSemanticAction(const int value) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Constant * constant = calloc(1, sizeof(Constant));
-	constant->value = value;
-	return constant;
+Program* ProgramSemanticAction(DeclarationList* declarations) {
+	return createProgram(declarations);
 }
 
-Expression * ArithmeticExpressionSemanticAction(Expression * leftExpression, Expression * rightExpression, ExpressionType type) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->leftExpression = leftExpression;
-	expression->rightExpression = rightExpression;
-	expression->type = type;
-	return expression;
+DeclarationList* AppendDeclarationListSemanticAction(DeclarationList* list, Declaration* declaration) {
+	return appendDeclaration(list, declaration);
 }
 
-Expression * FactorExpressionSemanticAction(Factor * factor) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->factor = factor;
-	expression->type = FACTOR;
-	return expression;
+DeclarationList* EmptyDeclarationListSemanticAction() {
+	return createDeclarationList();
 }
 
-Factor * ConstantFactorSemanticAction(Constant * constant) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor * factor = calloc(1, sizeof(Factor));
-	factor->constant = constant;
-	factor->type = CONSTANT;
-	return factor;
+Declaration* StringDeclarationSemanticAction(char* identifier, Expression* expression) {
+	return createDeclaration(STRING_TYPE, identifier, expression);
 }
 
-Factor * ExpressionFactorSemanticAction(Expression * expression) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor * factor = calloc(1, sizeof(Factor));
-	factor->expression = expression;
-	factor->type = EXPRESSION;
-	return factor;
+Declaration* AtomicDeclarationSemanticAction(char* identifier, Expression* expression) {
+	return createDeclaration(ATOMIC_TYPE, identifier, expression);
 }
 
-Program * ExpressionProgramSemanticAction(CompilerState * compilerState, Expression * expression) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Program * program = calloc(1, sizeof(Program));
-	program->expression = expression;
-	compilerState->abstractSyntaxtTree = program;
-	if (0 < flexCurrentContext()) {
-		logError(_logger, "The final context is not the default (0): %d", flexCurrentContext());
-		compilerState->succeed = false;
-	}
-	else {
-		compilerState->succeed = true;
-	}
-	return program;
+Declaration* BufferDeclarationSemanticAction(char* identifier, Expression* expression) {
+	return createDeclaration(BUFFER_TYPE, identifier, expression);
+}
+
+Expression* StringOperationExpressionSemanticAction(StringOperation* operation) {
+	return createStringOperationExpression(operation);
+}
+
+Expression* IdentifierExpressionSemanticAction(char* identifier) {
+	return createIdentifierExpression(identifier);
+}
+
+Expression* StringLiteralExpressionSemanticAction(char* literal) {
+	return createStringLiteralExpression(literal);
+}
+
+Expression* IntegerLiteralExpressionSemanticAction(int value) {
+	return createIntegerLiteralExpression(value);
+}
+
+Expression* InputExpressionSemanticAction() {
+	return createInputExpression();
+}
+
+StringOperation* RndOperationSemanticAction(Expression* min, Expression* max, Expression* charset) {
+	return createRndOperation(min, max, charset);
+}
+
+StringOperation* RevOperationSemanticAction(Expression* input) {
+	return createRevOperation(input);
+}
+
+StringOperation* TupOperationSemanticAction(Expression* input) {
+	return createTupOperation(input);
+}
+
+StringOperation* TloOperationSemanticAction(Expression* input) {
+	return createTloOperation(input);
+}
+
+StringOperation* RplOperationSemanticAction(Expression* original, Expression* from, Expression* to) {
+	return createRplOperation(original, from, to);
+}
+
+StringOperation* NumOperationSemanticAction(Expression* input) {
+	return createNumOperation(input);
+}
+
+StringOperation* LenOperationSemanticAction(Expression* input) {
+	return createLenOperation(input);
+}
+
+StringOperation* EncOperationSemanticAction(char* method, Expression* key, Expression* data) {
+	return createEncOperation(method, key, data);
+}
+
+StringOperation* DecOperationSemanticAction(char* method, Expression* key, Expression* encrypted) {
+	return createDecOperation(method, key, encrypted);
 }

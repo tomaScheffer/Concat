@@ -8,4 +8,10 @@ typedef enum {
 
 typedef int Token;
 
+typedef enum {
+    STRING_TYPE,
+    ATOMIC_TYPE,
+    BUFFER_TYPE
+} Type;
+
 #endif

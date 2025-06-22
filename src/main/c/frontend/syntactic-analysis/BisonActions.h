@@ -23,6 +23,7 @@ StatementList* StatementListSemanticAction(StatementList* list, Statement* state
 
 Statement* RoutineStatementSemanticAction(Routine* routine);
 Statement* RoutineCallSemanticAction(char* identifier);
+Statement* StringOperationStatementSemanticAction(StringOperation* operation);
 Statement* OutStatementSemanticAction(Expression* expression);
 Statement* DeclarationStatementSemanticAction(Declaration* declaration);
 
@@ -47,8 +48,9 @@ StringOperation* ToUpperStringOperationSemanticAction(char* string);
 StringOperation* ToLowerStringOperationSemanticAction(char* string);
 StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement);
 
-Interpolation* InterpolationSemanticAction(InterpolationFragmentList* fragments);
-InterpolationFragment* InterpolationFragmentListSemanticAction(InterpolationFragment* head, InterpolationFragment* next);
+Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list);
+InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* list, InterpolationFragment* fragment);
+
 InterpolationFragment* LiteralFragmentSemanticAction(char* text);
 InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier);
 

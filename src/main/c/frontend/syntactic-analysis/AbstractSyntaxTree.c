@@ -36,59 +36,35 @@ static InterpolationFragment* createInterpolationFragmentExpression(const char* 
 }
 
 Interpolation* createInterpolation() {
-	Interpolation* interp = malloc(sizeof(Interpolation));
-	interp->fragments = NULL;
+    Interpolation* interpolation = malloc(sizeof(Interpolation));
 
-	return interp;
-}
+    if (!interpolation) { return NULL; }
 
-void addInterpolationFragment(Interpolation* interpolation, InterpolationFragment* fragment) {
-	if (!interpolation->fragments) {
-		interpolation->fragments = fragment;
-	} else {
-		InterpolationFragment* current = interpolation->fragments;
-		while (current->next) {
-			current = current->next;
-		}
-		current->next = fragment;
-	}
-}
+    interpolation->fragments = malloc(sizeof(InterpolationFragmentList));
 
-Interpolation* InterpolationSemanticAction(InterpolationFragment* list) {
-    Interpolation* interpolation = createInterpolation();
-    InterpolationFragment* current = list;
-
-    while (current != NULL) {
-        InterpolationFragment* next = current->next;
-        current->next = NULL; // Desvincular antes de agregar
-        addInterpolationFragment(interpolation, current);
-        current = next;
+    if (!interpolation->fragments) {
+        free(interpolation);
+        return NULL;
     }
+
+    interpolation->fragments->head = NULL;
+    interpolation->fragments->tail = NULL;
 
     return interpolation;
 }
 
+void addInterpolationFragment(InterpolationFragmentList* list, InterpolationFragment* fragment) {
+    if (!list->head) {
+        list->head = fragment;
+        list->tail = fragment;
+    } else {
+        list->tail->next = fragment;
+        list->tail = fragment;
+    }
+    fragment->next = NULL;
+}
+
 // ----------------------------------------------------------------------------------------------
-
-static void releaseInterpolationFragments(InterpolationFragment* fragment) {
-	while (fragment) {
-		InterpolationFragment* next = fragment->next;
-		if (fragment->type == LITERAL_FRAGMENT) {
-			free(fragment->literal);
-		} else if (fragment->type == EXPRESSION_FRAGMENT) {
-			free(fragment->identifier);
-		}
-		free(fragment);
-		fragment = next;
-	}
-}
-
-void releaseInterpolation(Interpolation* interpolation) {
-	if (interpolation) {
-		releaseInterpolationFragments(interpolation->fragments);
-		free(interpolation);
-	}
-}
 
 void releaseFactor(Factor* factor) {
 	if (!factor) { return; }
@@ -160,4 +136,22 @@ void releaseProgram(Program* program) {
 
 	releaseStatementList(program->statements);
 	free(program);
+}
+
+void releaseInterpolationFragmentList(InterpolationFragmentList* list) {
+    InterpolationFragment* current = list->head;
+	
+    while (current) {
+        InterpolationFragment* next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void releaseInterpolation(Interpolation* interpolation) {
+	if (interpolation) {
+		releaseInterpolationFragmentList(interpolation->fragments);
+		free(interpolation);
+	}
 }

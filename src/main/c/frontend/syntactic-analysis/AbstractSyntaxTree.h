@@ -77,6 +77,7 @@ enum StatementType {
 	STATEMENT_DECLARATION,
 	STATEMENT_ROUTINE,
 	STATEMENT_ROUTINE_CALL,
+	STATEMENT_STRING_OPERATION,
 	STATEMENT_OUTPUT
 };
 
@@ -141,7 +142,7 @@ struct InterpolationFragment {
 
 struct InterpolationFragmentList {
     InterpolationFragment* head;
-    InterpolationFragmentList* tail;
+    InterpolationFragment* tail;
 };
 
 struct Interpolation {
@@ -176,10 +177,11 @@ struct Statement {
 	StatementType type;
 
 	union {
+		char* routineCallName;
 		Declaration* declaration;
 		struct Routine* routine;
-		char* routineCallName;
 		Expression* outputExpression;
+		StringOperation* stringOperation;
 	};
 };
 
@@ -194,13 +196,10 @@ struct Program {
 
 // ----------------------------------------------------
 
-
 void initializeAbstractSyntaxTreeModule();
 void shutdownAbstractSyntaxTreeModule();
 
 Interpolation* createInterpolation();
-Interpolation* InterpolationSemanticAction(InterpolationFragment* list);
-void addInterpolationFragment(Interpolation* interpolation, InterpolationFragment* fragment);
 
 void releaseProgram(Program* program);
 void releaseStatementList(StatementList* list);
@@ -209,8 +208,6 @@ void releaseRoutine(Routine* routine);
 void releaseExpression(Expression* expr);
 void releaseFactor(Factor* factor);
 void releaseInterpolation(Interpolation* interpolation);
-
-void releaseInterpolationFragments(InterpolationFragment* fragment);
-
+void releaseInterpolationFragmentList(InterpolationFragmentList* list);
 
 #endif

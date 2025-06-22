@@ -30,6 +30,7 @@
 	StringOperation* stringOperation;
 	Interpolation* interpolation;
 	InterpolationFragment* interpolation_fragment;
+	InterpolationFragmentList* interpolation_fragment_list;
 }
 
 /**
@@ -81,7 +82,8 @@
 %type <statementList> statement_list
 %type <stringOperation> string_operation
 %type <interpolation> interpolation
-%type <interpolation_fragment> interpolation_fragment interpolation_fragment_list
+%type <interpolation_fragment> interpolation_fragment
+%type <interpolation_fragment_list> interpolation_fragment_list
 
 /**
  * Precedence and associativity.
@@ -108,7 +110,8 @@ statement_list:
 statement:
 	declaration														{ $$ = DeclarationStatementSemanticAction($1); }
 	| routine														{ $$ = RoutineStatementSemanticAction($1); }
-	| routine_call													{ $$ = RoutineCallSemanticAction($1); }
+	| routine_call													{ $$ = $1; }
+	| string_operation												{ $$ = StringOperationStatementSemanticAction($1); }
 	| OUT_TOKEN expression											{ $$ = OutStatementSemanticAction($2); }
 
 expression:
@@ -128,7 +131,7 @@ factor:
 constant:
 	  ATOMIC_TOKEN													{ $$ = AtomicConstantSemanticAction($1); }
 	| STRING_TOKEN													{ $$ = StringConstantSemanticAction($1); }
-	| BUFFER_TYPE_TOKEN												{ $$ = BufferConstantSemanticAction($1); }
+	| BUFFER_TOKEN 													{ $$ = BufferConstantSemanticAction($1); }
 	;
 
 routine:

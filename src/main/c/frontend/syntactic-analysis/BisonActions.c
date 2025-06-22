@@ -84,6 +84,19 @@ Statement* RoutineCallSemanticAction(char* identifier) {
     return statement;
 }
 
+Statement* StringOperationStatementSemanticAction(StringOperation* operation) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Statement* statement = malloc(sizeof(Statement));
+    
+    if (!statement) { return NULL; }
+
+    statement->stringOperation = operation;
+    statement->type = STATEMENT_STRING_OPERATION;
+
+    return statement;
+}
+
 Statement* OutStatementSemanticAction(Expression* expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
@@ -356,23 +369,37 @@ StringOperation* ReplaceStringOperationSemanticAction(char* original, char* targ
 
 // ---------------------------------------------------------------------------------------
 
-Interpolation* InterpolationSemanticAction(InterpolationFragmentList* fragments) {
+Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+
     Interpolation* interpolation = malloc(sizeof(Interpolation));
 
     if (!interpolation) { return NULL; }
     
-    interpolation->fragments = fragments;
+    interpolation->fragments = list;
 
     return interpolation;
 }
 
-InterpolationFragment* InterpolationFragmentListSemanticAction(InterpolationFragment* head, InterpolationFragment* next) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
+InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* list, InterpolationFragment* fragment) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
 
-	if (head) { head->next = next; }
+    if (!list) {
+        list = malloc(sizeof(InterpolationFragmentList));
 
-	return head;
+        if (!list) { return NULL; }
+
+        list->head = fragment;
+        list->tail = fragment;
+    } else {
+        list->tail->next = fragment;
+        list->tail = fragment;
+    }
+
+    return list;
 }
+
+// ---------------------------------------------------------------------------------------
 
 InterpolationFragment* LiteralFragmentSemanticAction(char* literal) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);

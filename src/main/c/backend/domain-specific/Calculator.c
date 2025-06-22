@@ -134,4 +134,6 @@ ComputationResult computeFactor(Factor * factor) {/*
 		default:
 			return _invalidComputation();
 	}*/
+
+	return _invalidComputation();
 }

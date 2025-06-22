@@ -10,7 +10,6 @@
 #include "LexicalAnalyzerContext.h"  
 #include <stdio.h>  
 #include <stdlib.h>  
-#include <string.h>
 
 /** Initialize module's internal state. */  
 void initializeFlexActionsModule();  

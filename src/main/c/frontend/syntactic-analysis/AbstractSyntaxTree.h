@@ -86,7 +86,7 @@ struct DeclarationList {
 };
 
 struct Program {
-	DeclarationList* declarations;
+	Expression * expression;
 };
 
 /**

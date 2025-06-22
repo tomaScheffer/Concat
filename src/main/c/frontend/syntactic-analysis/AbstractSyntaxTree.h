@@ -41,8 +41,6 @@ typedef struct Program Program;
 * Node types for the Abstract Syntax Tree (AST).
 */
 
-// ----------------------------------------------------
-
 enum ExpressionType {
 	FACTOR_EXPRESSION,
 	ARITHMETIC_EXPRESSION
@@ -159,7 +157,7 @@ struct Declaration {
 struct StatementList {
 	Statement* statement;
 	StatementList* next;
-} StatementList;
+};
 
 struct Statement {
 	StatementType type;
@@ -175,7 +173,7 @@ struct Statement {
 struct Routine {
 	char* identifier;
 	StatementList* body;
-} Routine;
+};
 
 struct Program {
 	StatementList* statements;
@@ -183,14 +181,22 @@ struct Program {
 
 // ----------------------------------------------------
 
-/**
-* Node recursive destructors.
-*/
-void releaseConstant(Constant* constant);
-void releaseExpression(Expression* expression);
-void releaseFactor(Factor* factor);
-void releaseStringOperation(StringOperation* operation);
-void releaseDeclaration(Declaration* declaration);
+
+void initializeAbstractSyntaxTreeModule();
+void shutdownAbstractSyntaxTreeModule();
+
+Interpolation* createInterpolation();
+void addInterpolationFragment(Interpolation* interpolation, InterpolationFragment* fragment);
+
 void releaseProgram(Program* program);
+void releaseStatementList(StatementList* list);
+void releaseStatement(Statement* stmt);
+void releaseRoutine(Routine* routine);
+void releaseExpression(Expression* expr);
+void releaseFactor(Factor* factor);
+void releaseInterpolation(Interpolation* interpolation);
+
+void releaseInterpolationFragments(InterpolationFragment* fragment);
+
 
 #endif

@@ -15,90 +15,130 @@ void shutdownAbstractSyntaxTreeModule() {
 
 /** PUBLIC FUNCTIONS */
 
-void releaseConstant(Constant* constant) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (constant != NULL) {
-		free(constant);
+// ----------------------------------------------------------------------------------------------
+
+static InterpolationFragment* createInterpolationFragmentLiteral(const char* text) {
+	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
+	fragment->type = LITERAL_FRAGMENT;
+	fragment->literal = strdup(text);
+	fragment->next = NULL;
+	return fragment;
+}
+
+static InterpolationFragment* createInterpolationFragmentExpression(const char* identifier) {
+	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
+	fragment->type = EXPRESSION_FRAGMENT;
+	fragment->identifier = strdup(identifier);
+	fragment->next = NULL;
+	return fragment;
+}
+
+Interpolation* createInterpolation() {
+	Interpolation* interp = malloc(sizeof(Interpolation));
+	interp->fragments = NULL;
+	return interp;
+}
+
+void addInterpolationFragment(Interpolation* interpolation, InterpolationFragment* fragment) {
+	if (!interpolation->fragments) {
+		interpolation->fragments = fragment;
+	} else {
+		InterpolationFragment* current = interpolation->fragments;
+		while (current->next) {
+			current = current->next;
+		}
+		current->next = fragment;
 	}
 }
 
-void releaseExpression(Expression* expression) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (expression != NULL) {
-		switch (expression->type) {
-		case ADDITION:
-		case DIVISION:
-		case MULTIPLICATION:
-		case SUBTRACTION:
-			releaseExpression(expression->leftExpression);
-			releaseExpression(expression->rightExpression);
-			break;
-		case FACTOR:
-			releaseFactor(expression->factor);
-			break;
+// ----------------------------------------------------------------------------------------------
+
+static void releaseInterpolationFragments(InterpolationFragment* fragment) {
+	while (fragment) {
+		InterpolationFragment* next = fragment->next;
+		if (fragment->type == LITERAL_FRAGMENT) {
+			free(fragment->literal);
+		} else if (fragment->type == EXPRESSION_FRAGMENT) {
+			free(fragment->identifier);
 		}
-		free(expression);
+		free(fragment);
+		fragment = next;
+	}
+}
+
+void releaseInterpolation(Interpolation* interpolation) {
+	if (interpolation) {
+		releaseInterpolationFragments(interpolation->fragments);
+		free(interpolation);
 	}
 }
 
 void releaseFactor(Factor* factor) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (factor != NULL) {
-		switch (factor->type) {
-		case CONSTANT:
-			releaseConstant(factor->constant);
+	if (!factor) return;
+	switch (factor->type) {
+		case CONSTANT_FACTOR:
+			free(factor->constant);
 			break;
-		case EXPRESSION:
+		case EXPRESSION_FACTOR:
 			releaseExpression(factor->expression);
 			break;
-		}
-		free(factor);
+		case INTERPOLATION_FACTOR:
+			releaseInterpolation(factor->interpolation);
+			break;
 	}
+	free(factor);
 }
 
-void releaseStringOperation(StringOperation* operation) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (operation != NULL) {
-		free(operation->arg1);
-		free(operation->arg2);
-		free(operation->arg3);
-		free(operation);
+void releaseExpression(Expression* expr) {
+	if (!expr) return;
+
+	if (expr->type == FACTOR_EXPRESSION) {
+		releaseFactor(expr->factor);
+	} else {
+		releaseExpression(expr->leftExpression);
+		releaseExpression(expr->rightExpression);
 	}
+	free(expr);
 }
 
-void releaseDeclaration(Declaration* declaration) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (declaration != NULL) {
-		free(declaration->identifier);
-		switch (declaration->isString) {
-		case 0:
-			releaseExpression(declaration->expression);
-			break;
-		case 1:
-			free(declaration->stringLiteral);
-			break;
-		case 2:
-			releaseStringOperation(declaration->stringOperation);
-			break;
-		}
-		free(declaration);
-	}
-}
-
-void releaseDeclarationList(DeclarationList* list) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	while (list != NULL) {
-		DeclarationList* next = list->next;
-		releaseDeclaration(list->declaration);
+void releaseStatementList(StatementList* list) {
+	while (list) {
+		StatementList* next = list->next;
+		releaseStatement(list->statement);
 		free(list);
 		list = next;
 	}
 }
 
-void releaseProgram(Program* program) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (program != NULL) {
-		releaseDeclarationList(program->declarations);
-		free(program);
+void releaseStatement(Statement* stmt) {
+	if (!stmt) return;
+	switch (stmt->type) {
+		case STATEMENT_DECLARATION:
+			free(stmt->declaration->identifier);
+			free(stmt->declaration);
+			break;
+		case STATEMENT_ROUTINE:
+			releaseRoutine(stmt->routine);
+			break;
+		case STATEMENT_ROUTINE_CALL:
+			free(stmt->routineCallName);
+			break;
+		case STATEMENT_OUTPUT:
+			releaseExpression(stmt->outputExpression);
+			break;
 	}
+	free(stmt);
+}
+
+void releaseRoutine(Routine* routine) {
+	if (!routine) return;
+	free(routine->identifier);
+	releaseStatementList(routine->body);
+	free(routine);
+}
+
+void releaseProgram(Program* program) {
+	if (!program) return;
+	releaseStatementList(program->statements);
+	free(program);
 }

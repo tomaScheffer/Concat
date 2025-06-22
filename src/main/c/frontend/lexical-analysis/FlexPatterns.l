@@ -46,7 +46,7 @@
 "OUT"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), OUT_TOKEN); }
 "FUN"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), FUN_TOKEN); }
 
-[0-9]+                                  { return IntegerLexemeAction(createLexicalAnalyzerContext(), INTEGER_TOKEN); }
+[0-9]+                                  { return IntegerLexemeAction(createLexicalAnalyzerContext(), ATOMIC_TOKEN); }
 "="                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), ASSIGN_TOKEN); }
 ":"                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), COLON_TOKEN); }
 ";"                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), SEMICOLON_TOKEN); }

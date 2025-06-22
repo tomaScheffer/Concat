@@ -123,7 +123,7 @@ factor:
 	;
 
 constant:
-	  INTEGER_TOKEN													{ $$ = IntegerConstantSemanticAction($1); }
+	  ATOMIC_TOKEN													{ $$ = IntegerConstantSemanticAction($1); }
 	| STRING_TOKEN													{ $$ = StringConstantSemanticAction($1); }
 	| BUFFER_TYPE_TOKEN												{ $$ = BufferConstantSemanticAction($1); }
 	;

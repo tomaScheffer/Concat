@@ -17,28 +17,39 @@ void shutdownBisonActionsModule();
 /**
  * Bison semantic actions.
  */
-Program* ProgramSemanticAction(DeclarationList* declarations);
-DeclarationList* AppendDeclarationListSemanticAction(DeclarationList* list, Declaration* declaration);
-DeclarationList* EmptyDeclarationListSemanticAction();
 
-Declaration* StringDeclarationSemanticAction(char* identifier, Expression* expression);
-Declaration* AtomicDeclarationSemanticAction(char* identifier, Expression* expression);
-Declaration* BufferDeclarationSemanticAction(char* identifier, Expression* expression);
+Program* ProgramSemanticAction(StatementList* statements);
+StatementList* StatementListSemanticAction(StatementList* list, Statement* statement);
 
-Expression* StringOperationExpressionSemanticAction(StringOperation* operation);
-Expression* IdentifierExpressionSemanticAction(char* identifier);
-Expression* StringLiteralExpressionSemanticAction(char* literal);
-Expression* IntegerLiteralExpressionSemanticAction(int value);
-Expression* InputExpressionSemanticAction();
+Statement* RoutineStatementSemanticAction(Routine* routine);
+Statement* RoutineCallSemanticAction(char* identifier);
+Statement* OutStatementSemanticAction(Expression* expression);
+Statement* VariableDeclarationStatementSemanticAction(Declaration* declaration);
 
-StringOperation* RndOperationSemanticAction(Expression* min, Expression* max, Expression* charset);
-StringOperation* RevOperationSemanticAction(Expression* input);
-StringOperation* TupOperationSemanticAction(Expression* input);
-StringOperation* TloOperationSemanticAction(Expression* input);
-StringOperation* RplOperationSemanticAction(Expression* original, Expression* from, Expression* to);
-StringOperation* NumOperationSemanticAction(Expression* input);
-StringOperation* LenOperationSemanticAction(Expression* input);
-StringOperation* EncOperationSemanticAction(char* method, Expression* key, Expression* data);
-StringOperation* DecOperationSemanticAction(char* method, Expression* key, Expression* encrypted);
+Routine* RoutineSemanticAction(char* id, StatementList* body);
+Declaration* StringDeclarationSemanticAction(char* id, char* value);
+Declaration* AtomicDeclarationSemanticAction(char* id, int value);
+Declaration* BufferDeclarationSemanticAction(char* id, Buffer* buffer);
+Declaration* StringExpressionDeclarationSemanticAction(char* id, Expression* expr);
+
+Expression* FactorExpressionSemanticAction(Factor* factor);
+Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* right, ArithmeticOperator operator);
+Factor* ConstantFactorSemanticAction(Constant* constant);
+Factor* ExpressionFactorSemanticAction(Expression* expression);
+Factor* InterpolationFactorSemanticAction(Interpolation* interpolation);
+
+Constant* IntegerConstantSemanticAction(int value);
+Constant* StringConstantSemanticAction(char* value);
+Constant* BufferConstantSemanticAction(Buffer* value);
+
+Interpolation* InterpolationSemanticAction(InterpolationFragment* fragments);
+InterpolationFragment* InterpolationFragmentListSemanticAction(InterpolationFragment* head, InterpolationFragment* next);
+InterpolationFragment* LiteralFragmentSemanticAction(char* text);
+InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier);
+
+StringOperation* ReverseStringOperationSemanticAction(char* str);
+StringOperation* ToUpperStringOperationSemanticAction(char* str);
+StringOperation* ToLowerStringOperationSemanticAction(char* str);
+StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement);
 
 #endif

@@ -31,82 +31,254 @@ static void _logSyntacticAnalyzerAction(const char * functionName) {
 
 /* PUBLIC FUNCTIONS */
 
-Program* ProgramSemanticAction(DeclarationList* declarations) {
-	return createProgram(declarations);
+Program* ProgramSemanticAction(StatementList* statements) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Program* program = malloc(sizeof(Program));
+
+    if (!program) { return NULL; }
+
+    program->statements = statements;
+
+    return program;
 }
 
-DeclarationList* AppendDeclarationListSemanticAction(DeclarationList* list, Declaration* declaration) {
-	return appendDeclaration(list, declaration);
+StatementList* StatementListSemanticAction(Statement* statement, StatementList* next) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    StatementList* list = malloc(sizeof(StatementList));
+
+    if (!list) { return NULL; }
+
+    list->statement = statement;
+    list->next = next;
+
+    return list;
 }
 
-DeclarationList* EmptyDeclarationListSemanticAction() {
-	return createDeclarationList();
+// ---------------------------------------------------------------------------------------
+
+Statement* RoutineStatementSemanticAction(Routine* routine) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Statement* statement = malloc(sizeof(Statement));
+
+    if (!statement) { return NULL; }
+
+    statement->type = STATEMENT_ROUTINE;
+    statement->routine = routine;
+
+    return statement;
 }
 
-Declaration* StringDeclarationSemanticAction(char* identifier, Expression* expression) {
-	return createDeclaration(STRING_TYPE, identifier, expression);
+Statement* RoutineCallSemanticAction(char* identifier) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Statement* statement = malloc(sizeof(Statement));
+
+    if (!statement) { return NULL; }
+
+    statement->type = STATEMENT_ROUTINE_CALL;
+    statement->routineCallName = identifier;
+
+    return statement;
 }
 
-Declaration* AtomicDeclarationSemanticAction(char* identifier, Expression* expression) {
-	return createDeclaration(ATOMIC_TYPE, identifier, expression);
+Statement* OutStatementSemanticAction(Expression* expression) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Statement* statement = malloc(sizeof(Statement));
+
+    if (!statement) { return NULL; }
+
+    statement->type = STATEMENT_OUTPUT;
+    statement->outputExpression = expression;
+
+    return statement;
 }
 
-Declaration* BufferDeclarationSemanticAction(char* identifier, Expression* expression) {
-	return createDeclaration(BUFFER_TYPE, identifier, expression);
+Routine* RoutineSemanticAction(char* identifier, StatementList* body) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Routine* routine = malloc(sizeof(Routine));
+
+    if (!routine) { return NULL; }
+
+    routine->identifier = identifier;
+    routine->body = body;
+
+    return routine;
 }
 
-Expression* StringOperationExpressionSemanticAction(StringOperation* operation) {
-	return createStringOperationExpression(operation);
+// ---------------------------------------------------------------------------------------
+
+Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* right, ArithmeticOperator operator) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+    expression->type = ARITHMETIC_EXPRESSION;
+    expression->operator = operator;
+    expression->leftExpression = left;
+    expression->rightExpression = right;
+
+    return expression;
 }
 
-Expression* IdentifierExpressionSemanticAction(char* identifier) {
-	return createIdentifierExpression(identifier);
+Expression* FactorExpressionSemanticAction(Factor* factor) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+    expression->type = FACTOR_EXPRESSION;
+    expression->factor = factor;
+
+    return expression;
 }
 
-Expression* StringLiteralExpressionSemanticAction(char* literal) {
-	return createStringLiteralExpression(literal);
+// ---------------------------------------------------------------------------------------
+
+Factor* ConstantFactorSemanticAction(Constant* constant) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Factor* factor = malloc(sizeof(Factor));
+
+    if (!factor) { return NULL; }
+
+    factor->type = CONSTANT_FACTOR;
+    factor->constant = constant;
+
+    return factor;
 }
 
-Expression* IntegerLiteralExpressionSemanticAction(int value) {
-	return createIntegerLiteralExpression(value);
+Factor* ExpressionFactorSemanticAction(Expression* expression) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Factor* factor = malloc(sizeof(Factor));
+
+    if (!factor) { return NULL; }
+
+    factor->type = EXPRESSION_FACTOR;
+    factor->expression = expression;
+
+    return factor;
 }
 
-Expression* InputExpressionSemanticAction() {
-	return createInputExpression();
+Factor* InterpolationFactorSemanticAction(Interpolation* interpolation) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Factor* factor = malloc(sizeof(Factor));
+
+    if (!factor) { return NULL; }
+
+    factor->type = INTERPOLATION_FACTOR;
+    factor->interpolation = interpolation;
+
+    return factor;
 }
 
-StringOperation* RndOperationSemanticAction(Expression* min, Expression* max, Expression* charset) {
-	return createRndOperation(min, max, charset);
+// ---------------------------------------------------------------------------------------
+
+Constant* IntegerConstantSemanticAction(int value) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Constant* constant = malloc(sizeof(Constant));
+
+    if (!constant) { return NULL; }
+
+    constant->type = INTEGER_TYPE;
+    constant->integer = value;
+
+    return constant;
 }
 
-StringOperation* RevOperationSemanticAction(Expression* input) {
-	return createRevOperation(input);
+Constant* StringConstantSemanticAction(char* value) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Constant* constant = malloc(sizeof(Constant));
+
+    if (!constant) { return NULL; }
+
+    constant->type = STRING_TYPE;
+    constant->string = value;
+
+    return constant;
 }
 
-StringOperation* TupOperationSemanticAction(Expression* input) {
-	return createTupOperation(input);
+Constant* BufferConstantSemanticAction(Buffer* buffer) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Constant* constant = malloc(sizeof(Constant));
+
+    if (!constant) { return NULL; }
+
+    constant->type = BUFFER_TYPE;
+    constant->buffer = buffer;
+
+    return constant;
 }
 
-StringOperation* TloOperationSemanticAction(Expression* input) {
-	return createTloOperation(input);
+// ---------------------------------------------------------------------------------------
+
+Declaration* StringDeclarationSemanticAction(char* identifier, char* literal) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Declaration* decl = malloc(sizeof(Declaration));
+
+    if (!decl) { return NULL; }
+
+    decl->type = STRING_TYPE;
+    decl->identifier = identifier;
+    decl->stringLiteral = literal;
+
+    return decl;
 }
 
-StringOperation* RplOperationSemanticAction(Expression* original, Expression* from, Expression* to) {
-	return createRplOperation(original, from, to);
+Declaration* AtomicDeclarationSemanticAction(char* identifier, int value) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Declaration* decl = malloc(sizeof(Declaration));
+
+    if (!decl) { return NULL; }
+
+    decl->type = ATOMIC_TYPE;
+    decl->identifier = identifier;
+    decl->atomicValue = value;
+
+    return decl;
 }
 
-StringOperation* NumOperationSemanticAction(Expression* input) {
-	return createNumOperation(input);
+Declaration* BufferDeclarationSemanticAction(char* identifier, Buffer* buffer) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Declaration* declaration = malloc(sizeof(Declaration));
+
+    if (!declaration) { return NULL; }
+
+    declaration->type = BUFFER_TYPE;
+    declaration->identifier = identifier;
+    declaration->bufferValue = buffer;
+
+    return declaration;
 }
 
-StringOperation* LenOperationSemanticAction(Expression* input) {
-	return createLenOperation(input);
+Declaration* StringExpressionDeclarationSemanticAction(char* identifier, Expression* expression) { 
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	// Asignaciones a expresiones (para revisar)
+    Declaration* declaration = malloc(sizeof(Declaration));
+
+    if (!declaration) { return NULL; }
+
+    declaration->type = STRING_TYPE;
+    declaration->identifier = identifier;
+    declaration->expression = expression;
+
+    return declaration;
 }
 
-StringOperation* EncOperationSemanticAction(char* method, Expression* key, Expression* data) {
-	return createEncOperation(method, key, data);
-}
+// ---------------------------------------------------------------------------------------
 
-StringOperation* DecOperationSemanticAction(char* method, Expression* key, Expression* encrypted) {
-	return createDecOperation(method, key, encrypted);
-}

@@ -21,15 +21,19 @@ void shutdownFlexActionsModule();
  * Flex lexeme processing actions.  
  */  
 
-void BeginMultilineCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);  
-void EndMultilineCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);  
-void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);  
+void BeginMultilineCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+void EndMultilineCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
-Token KeywordLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);  
-Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);  
-Token IntegerLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);  
-Token StringLiteralLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);  
-Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);  
-Token UnknownLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);  
+Token TypeLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);  
+Token KeywordLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
+Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
+Token IntegerLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
+Token StringLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
+Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
+Token UnknownLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
+
+void BeginInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+void EndInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
 #endif

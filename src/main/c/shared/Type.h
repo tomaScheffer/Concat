@@ -14,4 +14,9 @@ typedef enum {
     BUFFER_TYPE
 } Type;
 
+struct Buffer {
+	int lenght;
+	uint8_t *data;
+};
+
 #endif

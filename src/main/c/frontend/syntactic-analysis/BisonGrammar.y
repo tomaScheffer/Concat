@@ -13,6 +13,7 @@
 
 	int integer;
 	char* string;
+	Buffer* buffer;
 	Token token;
 
 	/** Non-terminals. */
@@ -45,6 +46,7 @@
 */
 
 /** Terminals. */
+
 %token <token> STRING_TYPE_TOKEN ATOMIC_TYPE_TOKEN BUFFER_TYPE_TOKEN
 %token <token> RND_TOKEN REV_TOKEN TUP_TOKEN TLO_TOKEN RPL_TOKEN NUM_TOKEN LEN_TOKEN ENC_TOKEN DEC_TOKEN
 %token <token> FUN_TOKEN OUT_TOKEN
@@ -59,6 +61,8 @@
 %token <token> OPEN_BRACE_TOKEN CLOSE_BRACE_TOKEN
 %token <token> ADD_TOKEN SUB_TOKEN MUL_TOKEN DIV_TOKEN
 
+%token <token> INTERPOLATION_OPEN_TOKEN INTERPOLATION_CLOSE_TOKEN
+
 %token <token> UNKNOWN
 
 /** Non-terminals. */
@@ -72,9 +76,9 @@
 %type <statement> statement
 %type <statement> routine_call
 %type <declaration> declaration
-%type <interpolation> interpolation
 %type <statementList> statement_list
 %type <stringOperation> string_operation
+%type <interpolation> interpolation interpolation_fragment_list interpolation_fragment
 
 /**
  * Precedence and associativity.
@@ -95,14 +99,14 @@ program:
 	;
 
 statement_list:
-	statement SEMICOLON_TOKEN										{ $$ = StatementSemanticAction($1); }
+	statement SEMICOLON_TOKEN										{ $$ = StatementListSemanticAction($1, NULL); }
 	| statement_list statement SEMICOLON_TOKEN						{ $$ = StatementListSemanticAction($1, $2); }
 
 statement:
-	variable_declaration											{ $$ = VariableDeclarationStatementSemanticAction($1); }
-	operation_declaration											{ $$ = OperationDeclarationStatementSemanticAction($1); }
-	routine_declaration												{ $$ = RoutineDeclarationStatementSemanticAction($1); }
-	routine_call													{ $$ = RoutineCallSemanticAction($1); }
+	declaration														{ $$ = DeclarationStatementSemanticAction($1); }
+	| routine														{ $$ = RoutineStatementSemanticAction($1); }
+	| routine_call													{ $$ = RoutineCallSemanticAction($1); }
+	| OUT_TOKEN expression											{ $$ = OutStatementSemanticAction($2); }
 
 expression:
 	  expression ADD_TOKEN expression								{ $$ = ArithmeticExpressionSemanticAction($1, $3, ADDITION); }
@@ -115,6 +119,7 @@ expression:
 factor:
 	  OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN					{ $$ = ExpressionFactorSemanticAction($2); }
 	| constant														{ $$ = ConstantFactorSemanticAction($1); }
+	| interpolation													{ $$ = InterpolationFactorSemanticAction($1); }
 	;
 
 constant:
@@ -123,8 +128,8 @@ constant:
 	| BUFFER_TYPE_TOKEN												{ $$ = BufferConstantSemanticAction($1); }
 	;
 
-routine_declaration:
-	FUN_TOKEN IDENTIFIER_TOKEN OPEN_BRACE_TOKEN statement_list CLOSE_BRACE_TOKEN		{ $$ = RoutineDeclarationSemanticAction($2, $4); }
+routine:
+	FUN_TOKEN IDENTIFIER_TOKEN OPEN_BRACE_TOKEN statement_list CLOSE_BRACE_TOKEN		{ $$ = RoutineSemanticAction($2, $4); }
 	;
 
 routine_call:
@@ -135,13 +140,27 @@ declaration:
 	  STRING_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN STRING_TOKEN 		{ $$ = StringDeclarationSemanticAction($2, $4); }
 	| ATOMIC_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN ATOMIC_TOKEN 		{ $$ = AtomicDeclarationSemanticAction($2, $4); }
 	| BUFFER_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN BUFFER_TOKEN		{ $$ = BufferDeclarationSemanticAction($2, $4); }
+	| STRING_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN expression		{ $$ = StringExpressionDeclarationSemanticAction($2, $4); }
 	;
 
-stringOperation:
+string_operation:
 	  REV_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ReverseStringOperationSemanticAction($3); }
 	| TUP_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ToUpperStringOperationSemanticAction($3); }
 	| TLO_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ToLowerStringOperationSemanticAction($3); }
 	| RPL_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN COMMA_TOKEN STRING_TOKEN COMMA_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN { $$ = ReplaceStringOperationSemanticAction($3, $5, $7); }
 	;
 
+interpolation:
+	STRING_START_TOKEN interpolation_fragment_list STRING_END_TOKEN		{ $$ = InterpolationSemanticAction($2); }
+	;
+
+interpolation_fragment_list:
+	  interpolation_fragment											{ $$ = InterpolationFragmentListSemanticAction($1, NULL); }
+	| interpolation_fragment_list interpolation_fragment				{ $$ = InterpolationFragmentListSemanticAction($1, $2); }
+	;
+
+interpolation_fragment:
+	  STRING_TOKEN																		{ $$ = LiteralFragmentSemanticAction($1); }
+	| INTERPOLATION_OPEN_TOKEN IDENTIFIER_TOKEN INTERPOLATION_CLOSE_TOKEN				{ $$ = ExpressionFragmentSemanticAction($2); }
+	;
 %%

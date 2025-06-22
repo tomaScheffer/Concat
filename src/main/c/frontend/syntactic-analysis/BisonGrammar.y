@@ -46,12 +46,13 @@
 
 /** Terminals. */
 %token <token> STRING_TYPE_TOKEN ATOMIC_TYPE_TOKEN BUFFER_TYPE_TOKEN
-%token <token> INP_TOKEN RND_TOKEN REV_TOKEN TUP_TOKEN TLO_TOKEN RPL_TOKEN NUM_TOKEN LEN_TOKEN ENC_TOKEN DEC_TOKEN
+%token <token> RND_TOKEN REV_TOKEN TUP_TOKEN TLO_TOKEN RPL_TOKEN NUM_TOKEN LEN_TOKEN ENC_TOKEN DEC_TOKEN
 %token <token> FUN_TOKEN OUT_TOKEN
 %token <token> STRING_START_TOKEN STRING_END_TOKEN
 
-%token <string> STRING_TEXT_TOKEN IDENTIFIER_TOKEN
-%token <integer> INTEGER_TOKEN
+%token <string> STRING_TOKEN IDENTIFIER_TOKEN
+%token <integer> ATOMIC_TOKEN
+%token <buffer> BUFFER_TOKEN
 
 %token <token> ASSIGN_TOKEN COLON_TOKEN SEMICOLON_TOKEN COMMA_TOKEN
 %token <token> OPEN_PAREN_TOKEN CLOSE_PAREN_TOKEN
@@ -69,9 +70,11 @@
 
 %type <routine> routine
 %type <statement> statement
+%type <statement> routine_call
 %type <declaration> declaration
 %type <interpolation> interpolation
-%type <StringOperation> StringOperation
+%type <statementList> statement_list
+%type <stringOperation> string_operation
 
 /**
  * Precedence and associativity.
@@ -88,27 +91,18 @@
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
 program:
-	  declarationList												{ $$ = ProgramSemanticAction($1); }
+	statement_list													{ $$ = ProgramSemanticAction($1); }
 	;
 
-declarationList:
-	  declaration													{ $$ = DeclarationListSemanticAction(NULL, $1); }
-	| declarationList declaration									{ $$ = DeclarationListSemanticAction($1, $2); }
-	;
+statement_list:
+	statement SEMICOLON_TOKEN										{ $$ = StatementSemanticAction($1); }
+	| statement_list statement SEMICOLON_TOKEN						{ $$ = StatementListSemanticAction($1, $2); }
 
-declaration:
-	  "String" IDENTIFIER_TOKEN '=' STRING_LITERAL_TOKEN ';'		{ $$ = StringDeclarationSemanticAction($2, $4); }
-	| "String" IDENTIFIER_TOKEN '=' stringOperation ';'				{ $$ = StringOperationDeclarationSemanticAction($2, $4); }
-	| "String" IDENTIFIER_TOKEN '=' expression ';'					{ $$ = StringExpressionDeclarationSemanticAction($2, $4); }
-	| "Atomic" IDENTIFIER_TOKEN '=' expression ';'					{ $$ = AtomicDeclarationSemanticAction($2, $4); }
-	;
-
-stringOperation:
-	  "REV" '(' STRING_LITERAL_TOKEN ')'							{ $$ = ReverseStringOperationSemanticAction($3); }
-	| "TUP" '(' STRING_LITERAL_TOKEN ')'							{ $$ = ToUpperStringOperationSemanticAction($3); }
-	| "TLO" '(' STRING_LITERAL_TOKEN ')'							{ $$ = ToLowerStringOperationSemanticAction($3); }
-	| "RPL" '(' STRING_LITERAL_TOKEN ',' STRING_LITERAL_TOKEN ',' STRING_LITERAL_TOKEN ')' { $$ = ReplaceStringOperationSemanticAction($3, $5, $7); }
-	;
+statement:
+	variable_declaration											{ $$ = VariableDeclarationStatementSemanticAction($1); }
+	operation_declaration											{ $$ = OperationDeclarationStatementSemanticAction($1); }
+	routine_declaration												{ $$ = RoutineDeclarationStatementSemanticAction($1); }
+	routine_call													{ $$ = RoutineCallSemanticAction($1); }
 
 expression:
 	  expression ADD_TOKEN expression								{ $$ = ArithmeticExpressionSemanticAction($1, $3, ADDITION); }
@@ -125,6 +119,29 @@ factor:
 
 constant:
 	  INTEGER_TOKEN													{ $$ = IntegerConstantSemanticAction($1); }
+	| STRING_TOKEN													{ $$ = StringConstantSemanticAction($1); }
+	| BUFFER_TYPE_TOKEN												{ $$ = BufferConstantSemanticAction($1); }
+	;
+
+routine_declaration:
+	FUN_TOKEN IDENTIFIER_TOKEN OPEN_BRACE_TOKEN statement_list CLOSE_BRACE_TOKEN		{ $$ = RoutineDeclarationSemanticAction($2, $4); }
+	;
+
+routine_call:
+	IDENTIFIER_TOKEN													{ $$ = RoutineCallSemanticAction($1); }
+	;
+
+declaration:
+	  STRING_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN STRING_TOKEN 		{ $$ = StringDeclarationSemanticAction($2, $4); }
+	| ATOMIC_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN ATOMIC_TOKEN 		{ $$ = AtomicDeclarationSemanticAction($2, $4); }
+	| BUFFER_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN BUFFER_TOKEN		{ $$ = BufferDeclarationSemanticAction($2, $4); }
+	;
+
+stringOperation:
+	  REV_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ReverseStringOperationSemanticAction($3); }
+	| TUP_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ToUpperStringOperationSemanticAction($3); }
+	| TLO_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ToLowerStringOperationSemanticAction($3); }
+	| RPL_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN COMMA_TOKEN STRING_TOKEN COMMA_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN { $$ = ReplaceStringOperationSemanticAction($3, $5, $7); }
 	;
 
 %%

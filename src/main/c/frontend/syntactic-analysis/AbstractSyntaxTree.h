@@ -3,6 +3,7 @@
 
 #include "../../shared/Logger.h"
 #include <stdlib.h>
+#include <stdint.h>
 
 /** Initialize module's internal state. */
 void initializeAbstractSyntaxTreeModule();
@@ -24,6 +25,12 @@ typedef struct Declaration Declaration;
 typedef struct DeclarationList DeclarationList;
 typedef struct Program Program;
 
+typedef enum ValueType {
+	INTEGER_TYPE,
+	STRING_TYPE,
+	BUFFER_TYPE
+} ValueType;
+
 /**
 * Node types for the Abstract Syntax Tree (AST).
 */
@@ -37,19 +44,31 @@ enum ExpressionType {
 
 enum FactorType {
 	CONSTANT,
-	EXPRESSION
+	EXPRESSION,
+	VARIABLE_REFERENCE
+};
+
+struct Buffer {
+	int lenght;
+	uint8_t *data;
 };
 
 struct Constant {
-	int value;
+	ValueType type;
+
+	union {
+		int integer;
+		char *string;
+		struct Buffer* buffer;
+	};
 };
 
 struct Factor {
+	FactorType type;
 	union {
 		Constant* constant;
 		Expression* expression;
 	};
-	FactorType type;
 };
 
 struct Expression {
@@ -61,28 +80,6 @@ struct Expression {
 		};
 	};
 	ExpressionType type;
-};
-
-struct StringOperation {
-	char* operationName;
-	char* arg1;
-	char* arg2;
-	char* arg3;
-};
-
-struct Declaration {
-	char* identifier;
-	int isString; // 0 = expression, 1 = string literal, 2 = string operation (TODO: hacer enum)
-	union {
-		Expression* expression;
-		char* stringLiteral;
-		StringOperation* stringOperation;
-	};
-};
-
-struct DeclarationList {
-	Declaration* declaration;
-	DeclarationList* next;
 };
 
 struct Program {

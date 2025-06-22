@@ -34,7 +34,6 @@
 "Atomic"                                { return TypeLexemeAction(createLexicalAnalyzerContext(), ATOMIC_TYPE_TOKEN); }
 "Buffer"                                { return TypeLexemeAction(createLexicalAnalyzerContext(), BUFFER_TYPE_TOKEN); }
 
-"INP"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), INP_TOKEN); }
 "RND"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), RND_TOKEN); }
 "REV"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), REV_TOKEN); }
 "TUP"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), TUP_TOKEN); }

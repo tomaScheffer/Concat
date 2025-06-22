@@ -56,53 +56,67 @@ void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 
 Token TypeLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
 	lexicalAnalyzerContext->semanticValue->token = token;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return token;
 }
 
 Token KeywordLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
 	lexicalAnalyzerContext->semanticValue->token = token;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return token;
 }
 
 Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
 	lexicalAnalyzerContext->semanticValue->token = token;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return token;
 }
 
 Token IntegerLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
 	lexicalAnalyzerContext->semanticValue->integer = atoi(lexicalAnalyzerContext->lexeme);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return token;
 }
 
 Token StringLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
 	unsigned int len = lexicalAnalyzerContext->length;
 	char* unquoted = strdup(lexicalAnalyzerContext->lexeme + 1);
 	int lenght = strlen(lexicalAnalyzerContext->lexeme);
 	unquoted[lenght - 2] = '\0';
 	lexicalAnalyzerContext->semanticValue->string = unquoted;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return token;
 }
 
 Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+	
 	lexicalAnalyzerContext->semanticValue->string = strdup(lexicalAnalyzerContext->lexeme);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return IDENTIFIER_TOKEN;
 }
 
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
 	return UNKNOWN;
 }
 

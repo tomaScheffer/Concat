@@ -41,7 +41,7 @@ const int main(const int count, const char ** arguments) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
 		logDebugging(logger, "Computing expression value...");
-		ComputationResult computationResult = computeExpression(program->expression);
+		ComputationResult computationResult = computeExpression((Expression*)program->statements);
 		if (computationResult.succeed) {
 			compilerState.value = computationResult.value;
 			generate(&compilerState);

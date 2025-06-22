@@ -15,6 +15,7 @@
  * @see https://westes.github.io/flex/manual/Start-Conditions.html
  */
 %x MULTILINE_COMMENT
+%x INTERPOLATION
 
 /**
  * Reusable patterns.
@@ -63,11 +64,11 @@
 [A-Za-z_][A-Za-z0-9_]*                  { return IdentifierLexemeAction(createLexicalAnalyzerContext()); }
 
 \"                                      { BEGIN(INTERPOLATION); BeginInterpolationLexemeAction(createLexicalAnalyzerContext()); }
-<INTERPOLATION>"\""                     { EndInterpolationLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
+<INTERPOLATION>\"                       { EndInterpolationLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
 <INTERPOLATION>"${"                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERPOLATION_OPEN_TOKEN); }
 <INTERPOLATION>[a-zA-Z_][a-zA-Z0-9_]*   { return IdentifierLexemeAction(createLexicalAnalyzerContext()); }
 <INTERPOLATION>"}"                      { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERPOLATION_CLOSE_TOKEN); }
-<INTERPOLATION>[^\$\"\\]+               { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TEXT_TOKEN);  }
+<INTERPOLATION>[^$\"\\]+                { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TOKEN);  }
 
 [[:space:]]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }

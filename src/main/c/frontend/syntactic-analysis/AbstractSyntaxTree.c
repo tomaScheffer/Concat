@@ -22,6 +22,7 @@ static InterpolationFragment* createInterpolationFragmentLiteral(const char* tex
 	fragment->type = LITERAL_FRAGMENT;
 	fragment->literal = strdup(text);
 	fragment->next = NULL;
+	
 	return fragment;
 }
 
@@ -30,12 +31,14 @@ static InterpolationFragment* createInterpolationFragmentExpression(const char* 
 	fragment->type = EXPRESSION_FRAGMENT;
 	fragment->identifier = strdup(identifier);
 	fragment->next = NULL;
+
 	return fragment;
 }
 
 Interpolation* createInterpolation() {
 	Interpolation* interp = malloc(sizeof(Interpolation));
 	interp->fragments = NULL;
+
 	return interp;
 }
 
@@ -74,7 +77,7 @@ void releaseInterpolation(Interpolation* interpolation) {
 }
 
 void releaseFactor(Factor* factor) {
-	if (!factor) return;
+	if (!factor) { return; }
 	switch (factor->type) {
 		case CONSTANT_FACTOR:
 			free(factor->constant);
@@ -90,7 +93,7 @@ void releaseFactor(Factor* factor) {
 }
 
 void releaseExpression(Expression* expr) {
-	if (!expr) return;
+	if (!expr) { return; }
 
 	if (expr->type == FACTOR_EXPRESSION) {
 		releaseFactor(expr->factor);
@@ -111,7 +114,7 @@ void releaseStatementList(StatementList* list) {
 }
 
 void releaseStatement(Statement* stmt) {
-	if (!stmt) return;
+	if (!stmt) { return; }
 	switch (stmt->type) {
 		case STATEMENT_DECLARATION:
 			free(stmt->declaration->identifier);
@@ -131,14 +134,16 @@ void releaseStatement(Statement* stmt) {
 }
 
 void releaseRoutine(Routine* routine) {
-	if (!routine) return;
+	if (!routine) { return; }
+
 	free(routine->identifier);
 	releaseStatementList(routine->body);
 	free(routine);
 }
 
 void releaseProgram(Program* program) {
-	if (!program) return;
+	if (!program) { return; }
+
 	releaseStatementList(program->statements);
 	free(program);
 }

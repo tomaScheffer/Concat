@@ -22,7 +22,7 @@ typedef enum ConstantType ConstantType;
 typedef enum FactorType FactorType;
 typedef enum StatementType StatementType;
 typedef enum InterpolationFragmentType InterpolationFragmentType;
-
+typedef enum StringOperationType StringOperationType;
 
 typedef struct Buffer Buffer;
 typedef struct Constant Constant;
@@ -30,6 +30,7 @@ typedef struct Expression Expression;
 typedef struct Factor Factor;
 typedef struct Interpolation Interpolation;
 typedef struct InterpolationFragment InterpolationFragment;
+typedef struct InterpolationFragmentList InterpolationFragmentList;
 typedef struct StringOperation StringOperation;
 typedef struct Declaration Declaration;
 typedef struct StatementList StatementList;
@@ -53,8 +54,15 @@ enum ArithmeticOperator {
 	SUBTRACTION
 };
 
+enum StringOperationType {
+	STRING_OP_REVERSE,
+	STRING_OP_TO_UPPER,
+	STRING_OP_TO_LOWER,
+	STRING_OP_REPLACE
+};
+
 enum ConstantType {
-	INTEGER_TYPE,
+	ATOMIC_TYPE,
 	STRING_TYPE,
 	BUFFER_TYPE
 };
@@ -83,7 +91,7 @@ struct Constant {
 	ConstantType type;
 
 	union {
-		int integer;
+		int atomic;
 		char* string;
 		struct Buffer* buffer;
 	};
@@ -131,12 +139,17 @@ struct InterpolationFragment {
 	InterpolationFragment* next;
 };
 
+struct InterpolationFragmentList {
+    InterpolationFragment* head;
+    InterpolationFragmentList* tail;
+};
+
 struct Interpolation {
-	InterpolationFragment* fragments;
+	InterpolationFragmentList* fragments;
 };
 
 struct StringOperation {
-	char* operationName;
+	StringOperationType type;
 	char* arg1;
 	char* arg2;
 	char* arg3;

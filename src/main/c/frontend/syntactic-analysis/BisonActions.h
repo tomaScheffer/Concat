@@ -24,7 +24,7 @@ StatementList* StatementListSemanticAction(StatementList* list, Statement* state
 Statement* RoutineStatementSemanticAction(Routine* routine);
 Statement* RoutineCallSemanticAction(char* identifier);
 Statement* OutStatementSemanticAction(Expression* expression);
-Statement* VariableDeclarationStatementSemanticAction(Declaration* declaration);
+Statement* DeclarationStatementSemanticAction(Declaration* declaration);
 
 Routine* RoutineSemanticAction(char* id, StatementList* body);
 Declaration* StringDeclarationSemanticAction(char* id, char* value);
@@ -38,18 +38,18 @@ Factor* ConstantFactorSemanticAction(Constant* constant);
 Factor* ExpressionFactorSemanticAction(Expression* expression);
 Factor* InterpolationFactorSemanticAction(Interpolation* interpolation);
 
-Constant* IntegerConstantSemanticAction(int value);
+Constant* AtomicConstantSemanticAction(int value);
 Constant* StringConstantSemanticAction(char* value);
 Constant* BufferConstantSemanticAction(Buffer* value);
 
-Interpolation* InterpolationSemanticAction(InterpolationFragment* fragments);
+StringOperation* ReverseStringOperationSemanticAction(char* string);
+StringOperation* ToUpperStringOperationSemanticAction(char* string);
+StringOperation* ToLowerStringOperationSemanticAction(char* string);
+StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement);
+
+Interpolation* InterpolationSemanticAction(InterpolationFragmentList* fragments);
 InterpolationFragment* InterpolationFragmentListSemanticAction(InterpolationFragment* head, InterpolationFragment* next);
 InterpolationFragment* LiteralFragmentSemanticAction(char* text);
 InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier);
-
-StringOperation* ReverseStringOperationSemanticAction(char* str);
-StringOperation* ToUpperStringOperationSemanticAction(char* str);
-StringOperation* ToLowerStringOperationSemanticAction(char* str);
-StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement);
 
 #endif

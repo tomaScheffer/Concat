@@ -43,7 +43,7 @@ Program* ProgramSemanticAction(StatementList* statements) {
     return program;
 }
 
-StatementList* StatementListSemanticAction(Statement* statement, StatementList* next) {
+StatementList* StatementListSemanticAction(StatementList* next, Statement* statement) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     StatementList* list = malloc(sizeof(StatementList));
@@ -93,6 +93,18 @@ Statement* OutStatementSemanticAction(Expression* expression) {
 
     statement->type = STATEMENT_OUTPUT;
     statement->outputExpression = expression;
+
+    return statement;
+}
+
+Statement* DeclarationStatementSemanticAction(Declaration* declaration) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Statement* statement = malloc(sizeof(Statement));
+    if (!statement) { return NULL; }
+
+    statement->type = STATEMENT_DECLARATION;
+    statement->declaration = declaration;
 
     return statement;
 }
@@ -183,15 +195,15 @@ Factor* InterpolationFactorSemanticAction(Interpolation* interpolation) {
 
 // ---------------------------------------------------------------------------------------
 
-Constant* IntegerConstantSemanticAction(int value) {
+Constant* AtomicConstantSemanticAction(int value) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Constant* constant = malloc(sizeof(Constant));
 
     if (!constant) { return NULL; }
 
-    constant->type = INTEGER_TYPE;
-    constant->integer = value;
+    constant->type = ATOMIC_TYPE;
+    constant->atomic = value;
 
     return constant;
 }
@@ -282,3 +294,112 @@ Declaration* StringExpressionDeclarationSemanticAction(char* identifier, Express
 
 // ---------------------------------------------------------------------------------------
 
+StringOperation* ReverseStringOperationSemanticAction(char* string) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	StringOperation* operation = malloc(sizeof(StringOperation));
+
+	if (!operation) { return NULL; }
+
+	operation->type = STRING_OP_REVERSE;
+	operation->arg1 = string;
+	operation->arg2 = NULL;
+	operation->arg3 = NULL;
+
+	return operation;
+}
+
+StringOperation* ToUpperStringOperationSemanticAction(char* string) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	StringOperation* operation = malloc(sizeof(StringOperation));
+
+	if (!operation) { return NULL; }
+
+	operation->type = STRING_OP_TO_UPPER;
+	operation->arg1 = string;
+	operation->arg2 = NULL;
+	operation->arg3 = NULL;
+
+	return operation;
+}
+
+StringOperation* ToLowerStringOperationSemanticAction(char* string) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	StringOperation* operation = malloc(sizeof(StringOperation));
+
+	if (!operation) { return NULL; }
+
+	operation->type = STRING_OP_TO_LOWER;
+	operation->arg1 = string;
+	operation->arg2 = NULL;
+	operation->arg3 = NULL;
+
+	return operation;
+}
+
+StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	StringOperation* operation = malloc(sizeof(StringOperation));
+
+	if (!operation) { return NULL; }
+
+	operation->type = STRING_OP_REPLACE;
+	operation->arg1 = original;
+	operation->arg2 = target;
+	operation->arg3 = replacement;
+
+	return operation;
+}
+
+// ---------------------------------------------------------------------------------------
+
+Interpolation* InterpolationSemanticAction(InterpolationFragmentList* fragments) {
+    Interpolation* interpolation = malloc(sizeof(Interpolation));
+
+    if (!interpolation) { return NULL; }
+
+    interpolation->fragments = fragments;
+    
+    return interpolation;
+}
+
+InterpolationFragment* InterpolationFragmentListSemanticAction(InterpolationFragment* head, InterpolationFragment* next) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	if (head) { head->next = next; }
+
+	return head;
+}
+
+InterpolationFragment* LiteralFragmentSemanticAction(char* literal) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
+
+	if (!fragment) { return NULL; }
+
+	fragment->type = LITERAL_FRAGMENT;
+	fragment->literal = literal;
+	fragment->next = NULL;
+
+	return fragment;
+}
+
+InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	InterpolationFragment* frag = malloc(sizeof(InterpolationFragment));
+
+	if (!frag) { return NULL; }
+
+	frag->type = EXPRESSION_FRAGMENT;
+	frag->identifier = identifier;
+	frag->next = NULL;
+
+	return frag;
+}
+
+// ---------------------------------------------------------------------------------------

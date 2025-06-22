@@ -10,8 +10,8 @@
 %union {
 
 	/** Terminals. */
-
 	int integer;
+	int atomic;
 	char* string;
 	Buffer* buffer;
 	Token token;
@@ -24,10 +24,12 @@
 	Program* program;
 
 	Routine* routine;
-	Statement* statement;
     Declaration* declaration;
-	Interpolation* interpolation;
+	Statement* statement;
+	StatementList* statementList;
 	StringOperation* stringOperation;
+	Interpolation* interpolation;
+	InterpolationFragmentList* interpolation_fragment_list;
 }
 
 /**
@@ -52,8 +54,8 @@
 %token <token> FUN_TOKEN OUT_TOKEN
 %token <token> STRING_START_TOKEN STRING_END_TOKEN
 
+%token <atomic> ATOMIC_TOKEN
 %token <string> STRING_TOKEN IDENTIFIER_TOKEN
-%token <integer> ATOMIC_TOKEN
 %token <buffer> BUFFER_TOKEN
 
 %token <token> ASSIGN_TOKEN COLON_TOKEN SEMICOLON_TOKEN COMMA_TOKEN
@@ -78,7 +80,8 @@
 %type <declaration> declaration
 %type <statementList> statement_list
 %type <stringOperation> string_operation
-%type <interpolation> interpolation interpolation_fragment_list interpolation_fragment
+%type <interpolation> interpolation interpolation_fragment
+%type <interpolation_fragment_list> interpolation_fragment_list
 
 /**
  * Precedence and associativity.
@@ -99,7 +102,7 @@ program:
 	;
 
 statement_list:
-	statement SEMICOLON_TOKEN										{ $$ = StatementListSemanticAction($1, NULL); }
+	statement SEMICOLON_TOKEN										{ $$ = StatementListSemanticAction(NULL, $1); }
 	| statement_list statement SEMICOLON_TOKEN						{ $$ = StatementListSemanticAction($1, $2); }
 
 statement:
@@ -123,7 +126,7 @@ factor:
 	;
 
 constant:
-	  ATOMIC_TOKEN													{ $$ = IntegerConstantSemanticAction($1); }
+	  ATOMIC_TOKEN													{ $$ = AtomicConstantSemanticAction($1); }
 	| STRING_TOKEN													{ $$ = StringConstantSemanticAction($1); }
 	| BUFFER_TYPE_TOKEN												{ $$ = BufferConstantSemanticAction($1); }
 	;
@@ -137,8 +140,7 @@ routine_call:
 	;
 
 declaration:
-	  STRING_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN STRING_TOKEN 		{ $$ = StringDeclarationSemanticAction($2, $4); }
-	| ATOMIC_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN ATOMIC_TOKEN 		{ $$ = AtomicDeclarationSemanticAction($2, $4); }
+	ATOMIC_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN ATOMIC_TOKEN 		{ $$ = AtomicDeclarationSemanticAction($2, $4); }
 	| BUFFER_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN BUFFER_TOKEN		{ $$ = BufferDeclarationSemanticAction($2, $4); }
 	| STRING_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN expression		{ $$ = StringExpressionDeclarationSemanticAction($2, $4); }
 	;
@@ -155,7 +157,7 @@ interpolation:
 	;
 
 interpolation_fragment_list:
-	  interpolation_fragment											{ $$ = InterpolationFragmentListSemanticAction($1, NULL); }
+	  interpolation_fragment											{ $$ = InterpolationFragmentListSemanticAction(NULL, $1); }
 	| interpolation_fragment_list interpolation_fragment				{ $$ = InterpolationFragmentListSemanticAction($1, $2); }
 	;
 

@@ -8,22 +8,25 @@
 %define api.value.union.name SemanticValue
 
 %union {
+
 	/** Terminals. */
 
-	char * string;
 	int integer;
+	char* string;
 	Token token;
 
 	/** Non-terminals. */
 
-	Constant * constant;
-	Expression * expression;
-	Factor * factor;
-	Program * program;
+	Constant* constant;
+	Expression* expression;
+	Factor* factor;
+	Program* program;
 
-    Declaration * declaration;
-	DeclarationList * declarationList;
-	StringOperation * stringOperation;
+	Routine* routine;
+	Statement* statement;
+    Declaration* declaration;
+	Interpolation* interpolation;
+	StringOperation* stringOperation;
 }
 
 /**
@@ -44,36 +47,41 @@
 /** Terminals. */
 %token <token> STRING_TYPE_TOKEN ATOMIC_TYPE_TOKEN BUFFER_TYPE_TOKEN
 %token <token> INP_TOKEN RND_TOKEN REV_TOKEN TUP_TOKEN TLO_TOKEN RPL_TOKEN NUM_TOKEN LEN_TOKEN ENC_TOKEN DEC_TOKEN
-%token <token> END_TOKEN FUN_TOKEN OUT_TOKEN
+%token <token> FUN_TOKEN OUT_TOKEN
 %token <token> STRING_START_TOKEN STRING_END_TOKEN
+
 %token <string> STRING_TEXT_TOKEN IDENTIFIER_TOKEN
 %token <integer> INTEGER_TOKEN
 
 %token <token> ASSIGN_TOKEN COLON_TOKEN SEMICOLON_TOKEN COMMA_TOKEN
 %token <token> OPEN_PAREN_TOKEN CLOSE_PAREN_TOKEN
 %token <token> OPEN_BRACE_TOKEN CLOSE_BRACE_TOKEN
-
 %token <token> ADD_TOKEN SUB_TOKEN MUL_TOKEN DIV_TOKEN
 
 %token <token> UNKNOWN
 
 /** Non-terminals. */
+
 %type <constant> constant
 %type <expression> expression
 %type <factor> factor
 %type <program> program
 
+%type <routine> routine
+%type <statement> statement
 %type <declaration> declaration
-%type <declarationList> declarationList
-%type <stringOperation> stringOperation
+%type <interpolation> interpolation
+%type <StringOperation> StringOperation
 
 /**
  * Precedence and associativity.
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
+
 %left ADD_TOKEN SUB_TOKEN
 %left MUL_TOKEN DIV_TOKEN
+%left CLOSE_PAREN_TOKEN
 
 %%
 

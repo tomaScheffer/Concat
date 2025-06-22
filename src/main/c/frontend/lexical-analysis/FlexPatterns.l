@@ -45,8 +45,6 @@
 "ENC"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), ENC_TOKEN); }
 "DEC"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), DEC_TOKEN); }
 "OUT"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), OUT_TOKEN); }
-
-"END"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), END_TOKEN); }
 "FUN"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), FUN_TOKEN); }
 
 [0-9]+                                  { return IntegerLexemeAction(createLexicalAnalyzerContext(), INTEGER_TOKEN); }
@@ -69,7 +67,7 @@
 <INTERPOLATION>"\""                     { EndInterpolationLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
 <INTERPOLATION>"${"                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERPOLATION_OPEN_TOKEN); }
 <INTERPOLATION>[a-zA-Z_][a-zA-Z0-9_]*   { return IdentifierLexemeAction(createLexicalAnalyzerContext()); }
-<INTERPOLATION>"}"                      { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERP_CLOSE_TOKEN); }
+<INTERPOLATION>"}"                      { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERPOLATION_CLOSE_TOKEN); }
 <INTERPOLATION>[^\$\"\\]+               { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TEXT_TOKEN);  }
 
 [[:space:]]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }

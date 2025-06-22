@@ -29,7 +29,7 @@
 	StatementList* statementList;
 	StringOperation* stringOperation;
 	Interpolation* interpolation;
-	InterpolationFragmentList* interpolation_fragment_list;
+	InterpolationFragment* interpolation_fragment;
 }
 
 /**
@@ -80,8 +80,8 @@
 %type <declaration> declaration
 %type <statementList> statement_list
 %type <stringOperation> string_operation
-%type <interpolation> interpolation interpolation_fragment
-%type <interpolation_fragment_list> interpolation_fragment_list
+%type <interpolation> interpolation
+%type <interpolation_fragment> interpolation_fragment interpolation_fragment_list
 
 /**
  * Precedence and associativity.

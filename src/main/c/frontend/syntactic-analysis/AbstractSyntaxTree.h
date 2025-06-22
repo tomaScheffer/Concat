@@ -199,6 +199,7 @@ void initializeAbstractSyntaxTreeModule();
 void shutdownAbstractSyntaxTreeModule();
 
 Interpolation* createInterpolation();
+Interpolation* InterpolationSemanticAction(InterpolationFragment* list);
 void addInterpolationFragment(Interpolation* interpolation, InterpolationFragment* fragment);
 
 void releaseProgram(Program* program);

@@ -54,6 +54,20 @@ void addInterpolationFragment(Interpolation* interpolation, InterpolationFragmen
 	}
 }
 
+Interpolation* InterpolationSemanticAction(InterpolationFragment* list) {
+    Interpolation* interpolation = createInterpolation();
+    InterpolationFragment* current = list;
+
+    while (current != NULL) {
+        InterpolationFragment* next = current->next;
+        current->next = NULL; // Desvincular antes de agregar
+        addInterpolationFragment(interpolation, current);
+        current = next;
+    }
+
+    return interpolation;
+}
+
 // ----------------------------------------------------------------------------------------------
 
 static void releaseInterpolationFragments(InterpolationFragment* fragment) {

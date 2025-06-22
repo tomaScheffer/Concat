@@ -360,9 +360,9 @@ Interpolation* InterpolationSemanticAction(InterpolationFragmentList* fragments)
     Interpolation* interpolation = malloc(sizeof(Interpolation));
 
     if (!interpolation) { return NULL; }
-
-    interpolation->fragments = fragments;
     
+    interpolation->fragments = fragments;
+
     return interpolation;
 }
 

@@ -1,3 +1,0 @@
-FOR(element : "GOOD BYE")
-	OUT(element);
-END

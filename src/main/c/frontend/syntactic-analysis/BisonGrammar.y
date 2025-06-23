@@ -101,6 +101,7 @@
 
 program:
 	statement_list													{ $$ = ProgramSemanticAction($1); }
+	| %empty														{ $$ = ProgramSemanticAction(NULL); }
 	;
 
 statement_list:

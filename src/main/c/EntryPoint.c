@@ -35,6 +35,7 @@ const int main(const int count, const char ** arguments) {
 		.value = 0
 	};
 	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
+	/*
 	CompilationStatus compilationStatus = SUCCEED;
 	Program * program = compilerState.abstractSyntaxtTree;
 	if (syntacticAnalysisStatus == ACCEPT) {
@@ -67,6 +68,7 @@ const int main(const int count, const char ** arguments) {
 	shutdownBisonActionsModule();
 	shutdownFlexActionsModule();
 	logDebugging(logger, "Compilation is done.");
-	destroyLogger(logger);
-	return compilationStatus;
+	destroyLogger(logger);*/
+
+	return syntacticAnalysisStatus;
 }

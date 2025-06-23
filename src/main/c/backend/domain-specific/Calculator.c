@@ -25,7 +25,7 @@ static ComputationResult _invalidComputation();
  * possible, returns a binary operator that always returns an invalid
  * computation result.
  */
-static BinaryOperator _expressionTypeToBinaryOperator(const ExpressionType type) {/*
+static BinaryOperator _expressionTypeToBinaryOperator(const ExpressionType type) {
 	switch (type) {
 		case ADDITION: return add;
 		case DIVISION: return divide;
@@ -34,7 +34,7 @@ static BinaryOperator _expressionTypeToBinaryOperator(const ExpressionType type)
 		default:
 			logError(_logger, "The specified expression type cannot be converted into character: %d", type);
 			return _invalidBinaryOperator;
-	}*/
+	}
 }
 
 /**
@@ -97,12 +97,13 @@ ComputationResult subtract(const int minuend, const int subtract) {
 ComputationResult computeConstant(Constant * constant) {
 	ComputationResult computationResult = {
 		.succeed = true,
-		.value = 0/*constant->value*/
+		.value = constant->value;
 	};
 	return computationResult;
 }
 
-ComputationResult computeExpression(Expression * statements) {/*
+ComputationResult computeExpression(Expression * statements) {
+
 	switch (expression->type) {
 		case ADDITION:
 		case DIVISION:
@@ -121,11 +122,10 @@ ComputationResult computeExpression(Expression * statements) {/*
 			return computeFactor(expression->factor);
 		default:
 			return _invalidComputation();
-	}*/
-return _invalidComputation();
+	}
 }
 
-ComputationResult computeFactor(Factor * factor) {/*
+ComputationResult computeFactor(Factor * factor) {
 	switch (factor->type) {
 		case CONSTANT:
 			return computeConstant(factor->constant);
@@ -133,7 +133,7 @@ ComputationResult computeFactor(Factor * factor) {/*
 			return computeExpression(factor->expression);
 		default:
 			return _invalidComputation();
-	}*/
+	}
 
 	return _invalidComputation();
 }

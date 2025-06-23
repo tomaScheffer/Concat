@@ -1,7 +1,7 @@
 #ifndef TYPE_HEADER
 #define TYPE_HEADER
 
-#pragma warning(disable: 4005)
+#pragma warning(disable: 4005) // :'|
 #include <stdint.h>
 
 typedef enum {
@@ -12,8 +12,8 @@ typedef enum {
 typedef int Token;
 
 struct Buffer {
+	uint8_t* data;
 	int lenght;
-	uint8_t *data;
 };
 
 #endif

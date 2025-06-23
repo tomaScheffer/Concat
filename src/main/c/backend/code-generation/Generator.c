@@ -32,7 +32,7 @@ static void _output(const unsigned int indentationLevel, const char * const form
  * Converts and expression type to the proper character of the operation
  * involved, or returns '\0' if that's not possible.
  */
-static const char _expressionTypeToCharacter(const ExpressionType type) {/*
+static const char _expressionTypeToCharacter(const ExpressionType type) {
 	switch (type) {
 		case ADDITION: return '+';
 		case DIVISION: return '/';
@@ -41,7 +41,7 @@ static const char _expressionTypeToCharacter(const ExpressionType type) {/*
 		default:
 			logError(_logger, "The specified expression type cannot be converted into character: %d", type);
 			return '\0';
-	}*/
+	}
 }
 
 /**
@@ -71,7 +71,7 @@ static void _generateEpilogue(const int value) {
  */
 static void _generateExpression(const unsigned int indentationLevel, Expression * expression) {
 	_output(indentationLevel, "%s", "[ $E$, circle, draw, black!20\n");
-	/*switch (expression->type) {
+	switch (expression->type) {
 		case ADDITION:
 		case DIVISION:
 		case MULTIPLICATION:
@@ -86,7 +86,7 @@ static void _generateExpression(const unsigned int indentationLevel, Expression 
 		default:
 			logError(_logger, "The specified expression type is unknown: %d", expression->type);
 			break;
-	}*/
+	}
 	_output(indentationLevel, "%s", "]\n");
 }
 
@@ -95,7 +95,7 @@ static void _generateExpression(const unsigned int indentationLevel, Expression 
  */
 static void _generateFactor(const unsigned int indentationLevel, Factor * factor) {
 	_output(indentationLevel, "%s", "[ $F$, circle, draw, black!20\n");
-	/*switch (factor->type) {
+	switch (factor->type) {
 		case CONSTANT:
 			_generateConstant(1 + indentationLevel, factor->constant);
 			break;
@@ -107,7 +107,7 @@ static void _generateFactor(const unsigned int indentationLevel, Factor * factor
 		default:
 			logError(_logger, "The specified factor type is unknown: %d", factor->type);
 			break;
-	}*/
+	}
 	_output(indentationLevel, "%s", "]\n");
 }
 
@@ -115,7 +115,7 @@ static void _generateFactor(const unsigned int indentationLevel, Factor * factor
  * Generates the output of the program.
  */
 static void _generateProgram(Program * program) {
-	//_generateExpression(3, program->expression);
+	_generateExpression(3, program->expression);
 }
 
 /**

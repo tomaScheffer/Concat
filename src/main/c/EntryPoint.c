@@ -16,6 +16,7 @@
  */
 const int main(const int count, const char ** arguments) {
 	Logger * logger = createLogger("EntryPoint");
+
 	initializeFlexActionsModule();
 	initializeBisonActionsModule();
 	initializeSyntacticAnalyzerModule();
@@ -35,14 +36,17 @@ const int main(const int count, const char ** arguments) {
 		.value = 0
 	};
 	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
-	/*
+	
 	CompilationStatus compilationStatus = SUCCEED;
 	Program * program = compilerState.abstractSyntaxtTree;
+
 	if (syntacticAnalysisStatus == ACCEPT) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
+
 		logDebugging(logger, "Computing expression value...");
-		ComputationResult computationResult = computeExpression((Expression*)program->statements);
+		ComputationResult computationResult = computeExpression(program->statements);
+
 		if (computationResult.succeed) {
 			compilerState.value = computationResult.value;
 			generate(&compilerState);
@@ -58,6 +62,7 @@ const int main(const int count, const char ** arguments) {
 		logError(logger, "The syntactic-analysis phase rejects the input program.");
 		compilationStatus = FAILED;
 	}
+
 	logDebugging(logger, "Releasing AST resources...");
 	releaseProgram(program);
 	logDebugging(logger, "Releasing modules resources...");
@@ -68,7 +73,7 @@ const int main(const int count, const char ** arguments) {
 	shutdownBisonActionsModule();
 	shutdownFlexActionsModule();
 	logDebugging(logger, "Compilation is done.");
-	destroyLogger(logger);*/
+	destroyLogger(logger);
 
 	return syntacticAnalysisStatus;
 }

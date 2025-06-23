@@ -152,9 +152,9 @@ struct Interpolation {
 
 struct StringOperation {
 	StringOperationType type;
-	char* arg1;
-	char* arg2;
-	char* arg3;
+	Interpolation* arg1;
+	Interpolation* arg2;
+	Interpolation* arg3;
 };
 
 struct Declaration {

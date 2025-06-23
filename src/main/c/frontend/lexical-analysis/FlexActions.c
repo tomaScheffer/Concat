@@ -112,6 +112,34 @@ Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {
 	return IDENTIFIER_TOKEN;
 }
 
+Token InterpolatedIdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {
+    _logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
+    const char* lexeme = lexicalAnalyzerContext->lexeme;
+    size_t len = strlen(lexeme);
+
+    if (len >= 4 && lexeme[0] == '$' && lexeme[1] == '{' && lexeme[len - 1] == '}') {
+        size_t content_len = len - 3;
+        char* content = malloc(content_len + 1);
+		
+        if (!content) {
+            destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+            return UNKNOWN;
+        }
+        strncpy(content, lexeme + 2, content_len);
+        content[content_len] = '\0';
+
+        lexicalAnalyzerContext->semanticValue->string = content;
+    } else {
+        lexicalAnalyzerContext->semanticValue->string = strdup(lexeme);
+    }
+
+	logDebugging(_logger, lexicalAnalyzerContext->semanticValue->string);
+    destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
+    return INTERPOLATED_IDENTIFIER_TOKEN;
+}
+
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 
@@ -120,14 +148,18 @@ Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	return UNKNOWN;
 }
 
-void BeginInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
+Token BeginInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	if (_logIgnoredLexemes) {
 		_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 	}
+	
+	return STRING_START_TOKEN;
 }
 
-void EndInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
+Token EndInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	if (_logIgnoredLexemes) {
 		_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 	}
+
+	return STRING_END_TOKEN;
 }

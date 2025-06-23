@@ -65,10 +65,10 @@
 
 \"                                      { BEGIN(INTERPOLATION); BeginInterpolationLexemeAction(createLexicalAnalyzerContext()); }
 <INTERPOLATION>\"                       { EndInterpolationLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
-<INTERPOLATION>"${"                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERPOLATION_OPEN_TOKEN); }
-<INTERPOLATION>[a-zA-Z_][a-zA-Z0-9_]*   { return IdentifierLexemeAction(createLexicalAnalyzerContext()); }
-<INTERPOLATION>"}"                      { return SymbolLexemeAction(createLexicalAnalyzerContext(), INTERPOLATION_CLOSE_TOKEN); }
-<INTERPOLATION>[^$\"\\]+                { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TOKEN);  }
+<INTERPOLATION>\$\{[a-zA-Z_][a-zA-Z0-9_]*\} { return InterpolatedIdentifierLexemeAction(createLexicalAnalyzerContext()); }
+<INTERPOLATION>[^$\"\\]+                { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TOKEN); }
+<INTERPOLATION>.                        { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
+
 
 [[:space:]]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }

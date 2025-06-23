@@ -319,57 +319,55 @@ Declaration* StringExpressionDeclarationSemanticAction(char* identifier, Express
 
 // ---------------------------------------------------------------------------------------
 
-StringOperation* ReverseStringOperationSemanticAction(char* string) {
+StringOperation* ReverseStringOperationSemanticAction(Interpolation* interpolation) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
 	StringOperation* operation = malloc(sizeof(StringOperation));
-
-	if (!operation) { return NULL; }
+	if (!operation) return NULL;
 
 	operation->type = STRING_OP_REVERSE;
-	operation->arg1 = string;
+	operation->arg1 = interpolation;
 	operation->arg2 = NULL;
 	operation->arg3 = NULL;
 
 	return operation;
 }
 
-StringOperation* ToUpperStringOperationSemanticAction(char* string) {
+StringOperation* ToUpperStringOperationSemanticAction(Interpolation* interpolation) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
 	StringOperation* operation = malloc(sizeof(StringOperation));
 
-	if (!operation) { return NULL; }
+	if (!operation) { return NULL; };
 
 	operation->type = STRING_OP_TO_UPPER;
-	operation->arg1 = string;
+	operation->arg1 = interpolation;
 	operation->arg2 = NULL;
 	operation->arg3 = NULL;
 
 	return operation;
 }
 
-StringOperation* ToLowerStringOperationSemanticAction(char* string) {
+StringOperation* ToLowerStringOperationSemanticAction(Interpolation* interpolation) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
 	StringOperation* operation = malloc(sizeof(StringOperation));
 
-	if (!operation) { return NULL; }
+	if (!operation) { return NULL; };
 
 	operation->type = STRING_OP_TO_LOWER;
-	operation->arg1 = string;
+	operation->arg1 = interpolation;
 	operation->arg2 = NULL;
 	operation->arg3 = NULL;
 
 	return operation;
 }
 
-StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement) {
+StringOperation* ReplaceStringOperationSemanticAction(Interpolation* original, Interpolation* target, Interpolation* replacement) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
 	StringOperation* operation = malloc(sizeof(StringOperation));
-
-	if (!operation) { return NULL; }
+	if (!operation) { return NULL; };
 
 	operation->type = STRING_OP_REPLACE;
 	operation->arg1 = original;
@@ -429,6 +427,7 @@ InterpolationFragment* LiteralFragmentSemanticAction(char* literal) {
 
 InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
+    logError(_logger, identifier);
 
 	InterpolationFragment* frag = malloc(sizeof(InterpolationFragment));
 

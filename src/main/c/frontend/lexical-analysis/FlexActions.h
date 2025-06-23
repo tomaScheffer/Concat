@@ -32,9 +32,10 @@ Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token t
 Token AtomicLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
 Token StringLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
 Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
+Token InterpolatedIdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
 Token UnknownLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
 
-void BeginInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
-void EndInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+Token BeginInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+Token EndInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
 #endif

@@ -56,7 +56,7 @@
 %token <token> STRING_START_TOKEN STRING_END_TOKEN
 
 %token <atomic> ATOMIC_TOKEN
-%token <string> STRING_TOKEN IDENTIFIER_TOKEN
+%token <string> STRING_TOKEN IDENTIFIER_TOKEN INTERPOLATED_IDENTIFIER_TOKEN
 %token <buffer> BUFFER_TOKEN
 
 %token <token> ASSIGN_TOKEN COLON_TOKEN SEMICOLON_TOKEN COMMA_TOKEN
@@ -93,7 +93,6 @@
 
 %left ADD_TOKEN SUB_TOKEN
 %left MUL_TOKEN DIV_TOKEN
-%left CLOSE_PAREN_TOKEN
 
 %%
 
@@ -101,7 +100,6 @@
 
 program:
 	statement_list													{ $$ = ProgramSemanticAction($1); }
-	| %empty														{ $$ = ProgramSemanticAction(NULL); }
 	;
 
 statement_list:
@@ -151,10 +149,10 @@ declaration:
 	;
 
 string_operation:
-	  REV_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ReverseStringOperationSemanticAction($3); }
-	| TUP_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ToUpperStringOperationSemanticAction($3); }
-	| TLO_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN			{ $$ = ToLowerStringOperationSemanticAction($3); }
-	| RPL_TOKEN OPEN_BRACE_TOKEN STRING_TOKEN COMMA_TOKEN STRING_TOKEN COMMA_TOKEN STRING_TOKEN CLOSE_BRACE_TOKEN { $$ = ReplaceStringOperationSemanticAction($3, $5, $7); }
+	  REV_TOKEN OPEN_PAREN_TOKEN interpolation CLOSE_PAREN_TOKEN			{ $$ = ReverseStringOperationSemanticAction($3); }
+	| TUP_TOKEN OPEN_PAREN_TOKEN interpolation CLOSE_PAREN_TOKEN			{ $$ = ToUpperStringOperationSemanticAction($3); }
+	| TLO_TOKEN OPEN_PAREN_TOKEN interpolation CLOSE_PAREN_TOKEN			{ $$ = ToLowerStringOperationSemanticAction($3); }
+	| RPL_TOKEN OPEN_PAREN_TOKEN interpolation COMMA_TOKEN interpolation COMMA_TOKEN interpolation CLOSE_PAREN_TOKEN { $$ = ReplaceStringOperationSemanticAction($3, $5, $7); }
 	;
 
 interpolation:
@@ -169,6 +167,7 @@ interpolation_fragment_list:
 interpolation_fragment:
 	  STRING_TOKEN																		{ $$ = LiteralFragmentSemanticAction($1); }
 	| INTERPOLATION_OPEN_TOKEN IDENTIFIER_TOKEN INTERPOLATION_CLOSE_TOKEN				{ $$ = ExpressionFragmentSemanticAction($2); }
+	| INTERPOLATED_IDENTIFIER_TOKEN														{ $$ = ExpressionFragmentSemanticAction($1); }
 	;
 
 %%

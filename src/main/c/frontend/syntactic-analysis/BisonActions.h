@@ -44,10 +44,10 @@ Constant* AtomicConstantSemanticAction(int value);
 Constant* StringConstantSemanticAction(char* value);
 Constant* BufferConstantSemanticAction(Buffer* value);
 
-StringOperation* ReverseStringOperationSemanticAction(char* string);
-StringOperation* ToUpperStringOperationSemanticAction(char* string);
-StringOperation* ToLowerStringOperationSemanticAction(char* string);
-StringOperation* ReplaceStringOperationSemanticAction(char* original, char* target, char* replacement);
+StringOperation* ReverseStringOperationSemanticAction(Interpolation* interpolation);
+StringOperation* ToUpperStringOperationSemanticAction(Interpolation* interpolation);
+StringOperation* ToLowerStringOperationSemanticAction(Interpolation* interpolation);
+StringOperation* ReplaceStringOperationSemanticAction(Interpolation* original, Interpolation* target, Interpolation* replacement);
 
 Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list);
 InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* list, InterpolationFragment* fragment);

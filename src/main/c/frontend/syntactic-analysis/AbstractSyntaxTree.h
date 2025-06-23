@@ -87,6 +87,13 @@ enum InterpolationFragmentType {
 	EXPRESSION_FRAGMENT
 };
 
+enum DeclarationType {
+	DECL_STRING_LITERAL,
+	DECL_ATOMIC,
+	DECL_BUFFER,
+	DECL_EXPRESSION
+};
+
 // ----------------------------------------------------
 
 struct Constant {
@@ -112,13 +119,6 @@ struct Expression {
 		};
 	};
 
-};
-
-enum DeclarationType {
-	DECL_STRING_LITERAL,
-	DECL_ATOMIC,
-	DECL_BUFFER,
-	DECL_EXPRESSION
 };
 
 struct Factor {

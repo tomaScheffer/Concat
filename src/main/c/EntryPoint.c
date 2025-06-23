@@ -1,5 +1,6 @@
 #include "backend/code-generation/Generator.h"
 #include "backend/domain-specific/Calculator.h"
+#include "backend/semantic-analysis/SemanticAnalyzer.h"
 #include "frontend/lexical-analysis/FlexActions.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions.h"
@@ -8,7 +9,7 @@
 #include "shared/Environment.h"
 #include "shared/Logger.h"
 #include "shared/String.h"
-#include "SemanticAnalyzer.h"
+
 
 /**
  * The main entry-point of the entire application. If you use "strtok" to
@@ -45,7 +46,7 @@ const int main(const int count, const char ** arguments) {
 		
 		logDebugging(logger, "Parsing succeeded. Starting semantic analysis...");
 
-		if (performSemanticAnalysis(compilerState.abstractSyntaxtTree)) {
+		if (performSemanticAnalysis(program)) {
 			logDebugging(logger, "Semantic analysis succeeded. Starting code generation...");
 
 			//generate(&compilerState);

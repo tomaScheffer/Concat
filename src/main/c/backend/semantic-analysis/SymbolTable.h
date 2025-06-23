@@ -8,12 +8,6 @@
 #include <stdio.h>
 
 typedef enum {
-	TYPE_ATOMIC,
-	TYPE_STRING,
-	TYPE_BUFFER
-} VariableType;
-
-typedef enum {
 	VARIABLE_SYMBOL,
 	ROUTINE_SYMBOL
 } SymbolKind;
@@ -24,7 +18,7 @@ typedef struct {
 
 	union {
 		struct {
-			VariableType type;
+			ConstantType type;
 		} variable;
 
 		struct {

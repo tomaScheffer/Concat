@@ -90,7 +90,7 @@ static boolean _analyzeDeclaration(Declaration* declaration) {
 		return false;
 	}
 
-	if (declaration->type == TYPE_STRING || declaration->type == TYPE_BUFFER) {
+	if (declaration->type == STRING_TYPE || declaration->type == BUFFER_TYPE) {
 		return true;
 	} else {
 		return _analyzeExpression(declaration->expression);
@@ -138,7 +138,7 @@ static boolean _analyzeExpression(Expression* expression) {
 	}
 }
 
-static boolean _analyzeFactor(Factor * factor) {
+static boolean _analyzeFactor(Factor* factor) {
     _logSemanticAnalizer(__FUNCTION__);
 
 	if (!factor) { return false; }
@@ -161,13 +161,13 @@ static boolean _analyzeInterpolation(Interpolation* interpolation) {
 
 	if (!interpolation || !interpolation->fragments) { return true; }
 
-	InterpolationFragmentList* current = interpolation->fragments;
+	InterpolationFragment* current = interpolation->fragments->head;
 
 	while (current != NULL) {
-		if (!_analyzeInterpolationFragment(current->head)) {
+		if (!_analyzeInterpolationFragment(current)) {
 			return false;
 		}
-		current = current->tail;
+        current = current->next;
 	}
 
 	return true;
@@ -183,15 +183,17 @@ static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment) {
 			return true;
 
 		case EXPRESSION_FRAGMENT: {
-			const char* identifier = fragment->identifier;
+			char* identifier = fragment->identifier;
 
 			if (!isSymbolDefined(_symbolTable, identifier)) {
 				logError(_logger, "Undefined identifier in interpolation: '%s'", identifier);
 				return false;
 			}
 
-			VariableType type = getSymbolType(_symbolTable, identifier);
-			if (type != TYPE_STRING) {
+            Symbol *symbol = getSymbol(_symbolTable, identifier);
+			SymbolKind kind = symbol->kind;
+
+			if (kind != VARIABLE_SYMBOL || symbol->variable.type != STRING_TYPE) {
 				logWarning(_logger, "Interpolating non-string variable '%s'", identifier); // En este caso no considero que deba quedar en error
 			}
 

@@ -47,7 +47,7 @@
 "OUT"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), OUT_TOKEN); }
 "FUN"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), FUN_TOKEN); }
 
-[0-9]+                                  { return IntegerLexemeAction(createLexicalAnalyzerContext(), ATOMIC_TOKEN); }
+[0-9]+                                  { return AtomicLexemeAction(createLexicalAnalyzerContext(), ATOMIC_TOKEN); }
 "="                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), ASSIGN_TOKEN); }
 ":"                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), COLON_TOKEN); }
 ";"                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), SEMICOLON_TOKEN); }
@@ -73,6 +73,14 @@
 [[:space:]]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
+<<EOF>>								    {
+										    printf("%s", "[FlexPatterns] EOF, poping buffer.\n");
+										    yypop_buffer_state();
+										    if (!YY_CURRENT_BUFFER) {
+											    // Signals Bison to stop the parsing if there is no more input buffers in the stack.
+											    yyterminate();
+										    }
+									    }
 %%
 
 #include "FlexExport.h"

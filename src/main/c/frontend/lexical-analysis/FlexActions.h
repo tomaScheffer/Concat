@@ -11,6 +11,7 @@
 #include <stdio.h>  
 #include <stdlib.h>  
 
+
 /** Initialize module's internal state. */  
 void initializeFlexActionsModule();  
 
@@ -28,7 +29,7 @@ void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token TypeLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);  
 Token KeywordLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
 Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
-Token IntegerLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
+Token AtomicLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
 Token StringLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token);
 Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
 Token UnknownLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);

@@ -81,10 +81,10 @@ Token SymbolLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token t
 	return token;
 }
 
-Token IntegerLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
+Token AtomicLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 
-	lexicalAnalyzerContext->semanticValue->integer = atoi(lexicalAnalyzerContext->lexeme);
+	lexicalAnalyzerContext->semanticValue->atomic = atoi(lexicalAnalyzerContext->lexeme);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 
 	return token;

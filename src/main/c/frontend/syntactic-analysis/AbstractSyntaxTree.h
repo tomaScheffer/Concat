@@ -75,6 +75,7 @@ enum FactorType {
 
 enum StatementType {
 	STATEMENT_DECLARATION,
+	STATEMENT_EXPRESSION,
 	STATEMENT_ROUTINE,
 	STATEMENT_ROUTINE_CALL,
 	STATEMENT_STRING_OPERATION,
@@ -180,7 +181,7 @@ struct Statement {
 		char* routineCallName;
 		Declaration* declaration;
 		struct Routine* routine;
-		Expression* outputExpression;
+		Expression* expression;
 		StringOperation* stringOperation;
 	};
 };
@@ -203,9 +204,9 @@ Interpolation* createInterpolation();
 
 void releaseProgram(Program* program);
 void releaseStatementList(StatementList* list);
-void releaseStatement(Statement* stmt);
+void releaseStatement(Statement* statement);
 void releaseRoutine(Routine* routine);
-void releaseExpression(Expression* expr);
+void releaseExpression(Expression* expression);
 void releaseFactor(Factor* factor);
 void releaseInterpolation(Interpolation* interpolation);
 void releaseInterpolationFragmentList(InterpolationFragmentList* list);

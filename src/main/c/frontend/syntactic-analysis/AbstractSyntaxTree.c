@@ -103,24 +103,25 @@ void releaseStatementList(StatementList* list) {
 	}
 }
 
-void releaseStatement(Statement* stmt) {
-	if (!stmt) { return; }
-	switch (stmt->type) {
+void releaseStatement(Statement* statement) {
+	if (!statement) { return; }
+
+	switch (statement->type) {
 		case STATEMENT_DECLARATION:
-			free(stmt->declaration->identifier);
-			free(stmt->declaration);
+			free(statement->declaration->identifier);
+			free(statement->declaration);
 			break;
 		case STATEMENT_ROUTINE:
-			releaseRoutine(stmt->routine);
+			releaseRoutine(statement->routine);
 			break;
 		case STATEMENT_ROUTINE_CALL:
-			free(stmt->routineCallName);
+			free(statement->routineCallName);
 			break;
-		case STATEMENT_OUTPUT:
-			releaseExpression(stmt->outputExpression);
+		case STATEMENT_OUTPUT | STATEMENT_EXPRESSION:
+			releaseExpression(statement->expression);
 			break;
 	}
-	free(stmt);
+	free(statement);
 }
 
 void releaseRoutine(Routine* routine) {

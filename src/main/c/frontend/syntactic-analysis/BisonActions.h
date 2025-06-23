@@ -26,6 +26,7 @@ Statement* RoutineCallSemanticAction(char* identifier);
 Statement* StringOperationStatementSemanticAction(StringOperation* operation);
 Statement* OutStatementSemanticAction(Expression* expression);
 Statement* DeclarationStatementSemanticAction(Declaration* declaration);
+Statement* ExpressionStatementSemanticAction(Expression* expression);
 
 Routine* RoutineSemanticAction(char* id, StatementList* body);
 Declaration* StringDeclarationSemanticAction(char* id, char* value);

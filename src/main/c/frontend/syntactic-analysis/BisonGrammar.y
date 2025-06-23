@@ -110,6 +110,7 @@ statement_list:
 
 statement:
 	declaration														{ $$ = DeclarationStatementSemanticAction($1); }
+	| expression													{ $$ = ExpressionStatementSemanticAction($1); }
 	| routine														{ $$ = RoutineStatementSemanticAction($1); }
 	| routine_call													{ $$ = $1; }
 	| string_operation												{ $$ = StringOperationStatementSemanticAction($1); }
@@ -169,4 +170,5 @@ interpolation_fragment:
 	  STRING_TOKEN																		{ $$ = LiteralFragmentSemanticAction($1); }
 	| INTERPOLATION_OPEN_TOKEN IDENTIFIER_TOKEN INTERPOLATION_CLOSE_TOKEN				{ $$ = ExpressionFragmentSemanticAction($2); }
 	;
+
 %%

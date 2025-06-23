@@ -105,7 +105,7 @@ Statement* OutStatementSemanticAction(Expression* expression) {
     if (!statement) { return NULL; }
 
     statement->type = STATEMENT_OUTPUT;
-    statement->outputExpression = expression;
+    statement->expression = expression;
 
     return statement;
 }
@@ -118,6 +118,18 @@ Statement* DeclarationStatementSemanticAction(Declaration* declaration) {
 
     statement->type = STATEMENT_DECLARATION;
     statement->declaration = declaration;
+
+    return statement;
+}
+
+Statement* ExpressionStatementSemanticAction(Expression* expression) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Statement* statement = malloc(sizeof(Statement));
+    if (!statement) { return NULL; }
+
+    statement->type = STATEMENT_EXPRESSION;
+    statement->expression = expression;
 
     return statement;
 }

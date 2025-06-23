@@ -63,12 +63,11 @@
 
 [A-Za-z_][A-Za-z0-9_]*                  { return IdentifierLexemeAction(createLexicalAnalyzerContext()); }
 
-\"                                      { BEGIN(INTERPOLATION); BeginInterpolationLexemeAction(createLexicalAnalyzerContext()); }
-<INTERPOLATION>\"                       { EndInterpolationLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
+\"                                      { BEGIN(INTERPOLATION); return BeginInterpolationLexemeAction(createLexicalAnalyzerContext()); }
+<INTERPOLATION>\"                       { BEGIN(INITIAL); return EndInterpolationLexemeAction(createLexicalAnalyzerContext()); }
 <INTERPOLATION>\$\{[a-zA-Z_][a-zA-Z0-9_]*\} { return InterpolatedIdentifierLexemeAction(createLexicalAnalyzerContext()); }
-<INTERPOLATION>[^$\"\\]+                { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TOKEN); }
+<INTERPOLATION>[^$\"\\]+                    { return StringLexemeAction(createLexicalAnalyzerContext(), STRING_TOKEN); }
 <INTERPOLATION>.                        { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
-
 
 [[:space:]]+                            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .                                       { return UnknownLexemeAction(createLexicalAnalyzerContext()); }

@@ -134,7 +134,7 @@ Token InterpolatedIdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzer
         lexicalAnalyzerContext->semanticValue->string = strdup(lexeme);
     }
 
-	logDebugging(_logger, lexicalAnalyzerContext->semanticValue->string);
+// logDebugging(_logger, lexicalAnalyzerContext->semanticValue->string);
     destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 
     return INTERPOLATED_IDENTIFIER_TOKEN;

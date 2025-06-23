@@ -166,8 +166,8 @@ interpolation_fragment_list:
 
 interpolation_fragment:
 	  STRING_TOKEN																		{ $$ = LiteralFragmentSemanticAction($1); }
-	| INTERPOLATION_OPEN_TOKEN IDENTIFIER_TOKEN INTERPOLATION_CLOSE_TOKEN				{ $$ = ExpressionFragmentSemanticAction($2); }
 	| INTERPOLATED_IDENTIFIER_TOKEN														{ $$ = ExpressionFragmentSemanticAction($1); }
+	| INTERPOLATION_OPEN_TOKEN IDENTIFIER_TOKEN INTERPOLATION_CLOSE_TOKEN				{ $$ = ExpressionFragmentSemanticAction($2); }
 	;
 
 %%

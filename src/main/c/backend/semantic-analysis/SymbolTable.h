@@ -1,7 +1,11 @@
+#ifndef SYMBOLTABLE_HEADER
+#define SYMBOLTABLE_HEADER
+
+#include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
+#include "../../shared/Type.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "../../shared/Type.h"
 
 typedef enum {
 	TYPE_ATOMIC,
@@ -9,15 +13,33 @@ typedef enum {
 	TYPE_BUFFER
 } VariableType;
 
+typedef enum {
+	VARIABLE_SYMBOL,
+	ROUTINE_SYMBOL
+} SymbolKind;
+
 typedef struct {
-	const char * name;
-	VariableType type;
+    char* name;
+	SymbolKind kind;
+
+	union {
+		struct {
+			VariableType type;
+		} variable;
+
+		struct {
+			Routine* routine;
+		} routine;
+	};
 } Symbol;
 
 typedef struct SymbolTable SymbolTable;
 
-SymbolTable * createSymbolTable();
-void destroySymbolTable(SymbolTable * table);
-boolean defineSymbol(SymbolTable * table, const char * name, VariableType type);
-boolean isSymbolDefined(SymbolTable * table, const char * name);
-VariableType getSymbolType(SymbolTable * table, const char * name);
+SymbolTable* createSymbolTable();
+void destroySymbolTable(SymbolTable* table);
+
+boolean defineVariableSymbol(SymbolTable* table, char* name, Symbol symbol);
+boolean isSymbolDefined(SymbolTable* table, char* name);
+Symbol* getSymbol(SymbolTable* table, char* name);
+
+#endif

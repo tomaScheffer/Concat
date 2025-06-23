@@ -11,6 +11,8 @@ static boolean _analyzeDeclaration(Declaration* declaration);
 static boolean _analyzeExpression(Expression* expression);
 static boolean _analyzeFactor(Factor* factor);
 static boolean _analyzeRoutine(Routine* routine);
+static boolean _analyzeInterpolation(Interpolation* interpolation);
+static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment);
 
 //--------------------------------------------------------------------------
 
@@ -22,6 +24,8 @@ void initializeSemanticAnalyzerModule() {
 void shutdownSemanticAnalyzerModule() {
 	destroySymbolTable(_symbolTable);
 	destroyLogger(_logger);
+    _logger = NULL;
+    _symbolTable = NULL;
 }
 
 //--------------------------------------------------------------------------
@@ -134,7 +138,7 @@ static boolean _analyzeExpression(Expression* expression) {
 	}
 }
 
-static boolean _analyzeFactor(Factor* factor) {
+static boolean _analyzeFactor(Factor * factor) {
     _logSemanticAnalizer(__FUNCTION__);
 
 	if (!factor) { return false; }
@@ -145,10 +149,57 @@ static boolean _analyzeFactor(Factor* factor) {
 		case EXPRESSION_FACTOR:
 			return _analyzeExpression(factor->expression);
 		case INTERPOLATION_FACTOR:
-			// TODO
-			return true;
+			return _analyzeInterpolation(factor->interpolation);
 		default:
 			logError(_logger, "Unknown factor type.");
+			return false;
+	}
+}
+
+static boolean _analyzeInterpolation(Interpolation* interpolation) {
+    _logSemanticAnalizer(__FUNCTION__);
+
+	if (!interpolation || !interpolation->fragments) { return true; }
+
+	InterpolationFragmentList* current = interpolation->fragments;
+
+	while (current != NULL) {
+		if (!_analyzeInterpolationFragment(current->head)) {
+			return false;
+		}
+		current = current->tail;
+	}
+
+	return true;
+}
+
+static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment) {
+    _logSemanticAnalizer(__FUNCTION__);
+
+	if (!fragment) { return false; }
+
+	switch (fragment->type) {
+		case LITERAL_FRAGMENT:
+			return true;
+
+		case EXPRESSION_FRAGMENT: {
+			const char* identifier = fragment->identifier;
+
+			if (!isSymbolDefined(_symbolTable, identifier)) {
+				logError(_logger, "Undefined identifier in interpolation: '%s'", identifier);
+				return false;
+			}
+
+			VariableType type = getSymbolType(_symbolTable, identifier);
+			if (type != TYPE_STRING) {
+				logWarning(_logger, "Interpolating non-string variable '%s'", identifier); // En este caso no considero que deba quedar en error
+			}
+
+			return true;
+		}
+
+		default:
+			logError(_logger, "Unknown interpolation fragment type.");
 			return false;
 	}
 }
@@ -163,9 +214,9 @@ boolean performSemanticAnalysis(Program* program) {
         return false;
     }
 
-    SymbolTable* table = createSymbolTable();
-    boolean status = analyzeStatementList(program->statements, table);
-    destroySymbolTable(table);
-    
+    initializeSemanticAnalyzerModule();
+    boolean status = _analyzeStatementList(program->statements);
+    shutdownSemanticAnalyzerModule();
+
     return status;
 }

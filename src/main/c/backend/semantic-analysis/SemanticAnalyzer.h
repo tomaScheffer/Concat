@@ -8,8 +8,6 @@
 
 // ------------------------------------------------------------------------------------
 
-void initializeSemanticAnalyzerModule();
-void shutdownSemanticAnalyzerModule();
 boolean performSemanticAnalysis(Program* program);
 
 #endif

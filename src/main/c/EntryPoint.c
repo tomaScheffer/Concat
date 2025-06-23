@@ -8,6 +8,7 @@
 #include "shared/Environment.h"
 #include "shared/Logger.h"
 #include "shared/String.h"
+#include "SemanticAnalyzer.h"
 
 /**
  * The main entry-point of the entire application. If you use "strtok" to
@@ -35,28 +36,24 @@ const int main(const int count, const char ** arguments) {
 		.succeed = false,
 		.value = 0
 	};
-	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
+	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);			// FRONT
 	
 	CompilationStatus compilationStatus = SUCCEED;
 	Program * program = compilerState.abstractSyntaxtTree;
 
-	if (syntacticAnalysisStatus == ACCEPT) {
-		// ----------------------------------------------------------------------------------------
-		// Beginning of the Backend... ------------------------------------------------------------
+	if (syntacticAnalysisStatus == ACCEPT) {												// BACK
+		
+		logDebugging(logger, "Parsing succeeded. Starting semantic analysis...");
 
-		logDebugging(logger, "Computing expression value...");
-		ComputationResult computationResult = computeExpression(program->statements);
+		if (performSemanticAnalysis(compilerState.abstractSyntaxtTree)) {
+			logDebugging(logger, "Semantic analysis succeeded. Starting code generation...");
 
-		if (computationResult.succeed) {
-			compilerState.value = computationResult.value;
-			generate(&compilerState);
+			//generate(&compilerState);
 		}
 		else {
-			logError(logger, "The computation phase rejects the input program.");
+			logError(logger, "Semantic analysis failed.");
 			compilationStatus = FAILED;
 		}
-		// ...end of the Backend. -----------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------
 	}
 	else {
 		logError(logger, "The syntactic-analysis phase rejects the input program.");

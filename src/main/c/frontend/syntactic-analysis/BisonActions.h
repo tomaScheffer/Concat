@@ -18,7 +18,7 @@ void shutdownBisonActionsModule();
  * Bison semantic actions.
  */
 
-Program* ProgramSemanticAction(StatementList* statements);
+Program* ProgramSemanticAction(CompilerState *compilerState, StatementList* statements);
 StatementList* StatementListSemanticAction(StatementList* list, Statement* statement);
 
 Statement* RoutineStatementSemanticAction(Routine* routine);

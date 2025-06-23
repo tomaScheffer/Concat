@@ -38,7 +38,6 @@ const int main(const int count, const char ** arguments) {
 		.value = 0
 	};
 	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);			// FRONT
-	
 	CompilationStatus compilationStatus = SUCCEED;
 	Program * program = compilerState.abstractSyntaxtTree;
 

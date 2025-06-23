@@ -99,7 +99,7 @@
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
 program:
-	statement_list													{ $$ = ProgramSemanticAction($1); }
+	statement_list													{ $$ = ProgramSemanticAction(currentCompilerState(), $1); }
 	;
 
 statement_list:

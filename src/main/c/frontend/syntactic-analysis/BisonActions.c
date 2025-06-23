@@ -31,7 +31,7 @@ static void _logSyntacticAnalyzerAction(const char * functionName) {
 
 /* PUBLIC FUNCTIONS */
 
-Program* ProgramSemanticAction(StatementList* statements) {
+Program* ProgramSemanticAction(CompilerState *compilerState, StatementList* statements) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Program* program = malloc(sizeof(Program));
@@ -39,6 +39,9 @@ Program* ProgramSemanticAction(StatementList* statements) {
     if (!program) { return NULL; }
 
     program->statements = statements;
+
+    compilerState->abstractSyntaxtTree = program;
+    compilerState->succeed = true;
 
     return program;
 }

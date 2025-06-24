@@ -37,7 +37,7 @@ typedef struct Routine Routine;
 typedef struct Program Program;
 
 typedef struct ArithmeticExpression ArithmeticExpression;
-typedef struct UnaryStringExpression UnaryStringExpression;
+typedef struct UnaryExpression UnaryExpression;
 typedef struct RandomExpression RandomExpression;
 typedef struct ReplaceExpression ReplaceExpression;
 
@@ -113,7 +113,7 @@ struct ArithmeticExpression {
 	Expression* right;
 };
 
-struct UnaryStringExpression {
+struct UnaryExpression {
 	Expression* input;
 };
 
@@ -135,7 +135,7 @@ struct Expression {
 	union {
 		Factor* factor;
 		ArithmeticExpression* arithmetic;
-		UnaryStringExpression* unary;
+		UnaryExpression* unary;
 		RandomExpression* random;
 		ReplaceExpression* replace;
 	};

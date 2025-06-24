@@ -99,7 +99,6 @@ static boolean _analyzeRoutine(Routine* routine) {
 
 	if (isSymbolDefined(_symbolTable, routine->identifier)) {
 		logError(_logger, "Routine '%s' already defined", routine->identifier);
-
 		return false;
 	}
 
@@ -127,6 +126,18 @@ static boolean _analyzeExpression(Expression* expression) {
 				   _analyzeExpression(expression->arithmetic->right);
 		case FACTOR_EXPRESSION:
 			return _analyzeFactor(expression->factor);
+		case EXPRESSION_RND:
+			return _analyzeExpression(expression->random->min) &&
+			       _analyzeExpression(expression->random->max) &&
+			       _analyzeExpression(expression->random->charset);
+		case EXPRESSION_REV:
+		case EXPRESSION_TUP:
+		case EXPRESSION_TLO:
+			return _analyzeExpression(expression->unary->input);
+		case EXPRESSION_RPL:
+			return _analyzeExpression(expression->replace->original) &&
+			       _analyzeExpression(expression->replace->target) &&
+			       _analyzeExpression(expression->replace->replacement);
 		default:
 			logError(_logger, "Unknown expression type.");
 			return false;

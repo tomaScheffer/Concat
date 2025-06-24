@@ -19,6 +19,12 @@ static char* _evaluateInterpolation(Interpolation* interpolation);
 static char* _duplicateString(char* text);
 static void _executeRoutine(char* identifier);
 
+static char* _evaluateRandom(RandomExpression* random);
+static char* _evaluateReverse(UnaryExpression* unary);
+static char* _evaluateToUpper(UnaryExpression* unary);
+static char* _evaluateToLower(UnaryExpression* unary);
+static char* _evaluateReplace(ReplaceExpression* replace);
+
 static void _generateProgram(Program* program);
 static void _generatePrologue(void);
 static void _generateEpilogue(const int value);
@@ -104,7 +110,18 @@ static char* _evaluateExpression(Expression* expression) {
 	switch (expression->type) {
 		case FACTOR_EXPRESSION:
 			return _evaluateFactor(expression->factor);
-		case ARITHMETIC_EXPRESSION: // TODO
+		case ARITHMETIC_EXPRESSION: // TODO!
+			return strdup("ARITHMETIC_EXPRESSION");
+        case EXPRESSION_RND:
+            return _evaluateRandom(expression->random);
+        case EXPRESSION_REV:
+            return _evaluateReverse(expression->unary);
+        case EXPRESSION_TUP:
+            return _evaluateToUpper(expression->unary);
+        case EXPRESSION_TLO:
+            return _evaluateToLower(expression->unary);
+        case EXPRESSION_RPL:
+            return _evaluateReplace(expression->replace);
 		default:
 			logError(_logger, "Unsupported expression type.");
 			return _duplicateString("");
@@ -124,8 +141,8 @@ static char* _evaluateFactor(Factor* factor) {
 		case EXPRESSION_FACTOR:
 			return _evaluateExpression(factor->expression);
 		case IDENTIFIER_FACTOR: {
-			const char* identifier = factor->identifier;
-			Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+			char* identifier = factor->identifier;
+			Symbol* symbol = getSymbol(_symbolTable, identifier);
 
 			if (!symbol) {
 				logError(_logger, "Undefined identifier: '%s'", identifier);
@@ -158,7 +175,7 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
     InterpolationFragmentList* current = interpolation->fragments;
     char* result = _duplicateString("");
 
-    while (current) { // Appendear
+    while (current) { // Appendear fragmentos
         InterpolationFragment* fragment = current->head;
         char* value = NULL;
 
@@ -238,6 +255,156 @@ static void _executeRoutine(char* identifier) {
 
 	logDebugging(_logger, "Executing routine: %s", identifier);
 	_executeStatementList(symbol->routine->body);
+}
+
+//------------------------------------------------------------------------------------------------------
+
+static char* _evaluateRandom(RandomExpression* random) {
+    char* minStr = _evaluateExpression(random->min);
+    char* maxStr = _evaluateExpression(random->max);
+    char* charset = _evaluateExpression(random->charset);
+
+    if (!minStr || !maxStr || !charset) {
+        free(minStr);
+		free(maxStr);
+		free(charset);
+        return NULL;
+    }
+
+    int min = atoi(minStr);
+    int max = atoi(maxStr);
+    free(minStr);
+    free(maxStr);
+
+    if (min > max || max <= 0 || min < 0) {
+        free(charset);
+        return NULL;
+    }
+
+    int length = min + (rand() % (max - min + 1));
+    int charsetLen = strlen(charset);
+    char* result = malloc(length + 1);
+
+    if (!result) {
+        free(charset);
+        return NULL;
+    }
+
+    for (int i = 0; i < length; i++) {
+        result[i] = charset[rand() % charsetLen];
+    }
+
+    result[length] = '\0';
+    free(charset);
+
+    return result;
+}
+
+static char* _evaluateReverse(UnaryExpression* unary) {
+    char* input = _evaluateExpression(unary->input);
+
+    if (!input) { return NULL; }
+
+    int lenght = strlen(input);
+    char* result = malloc(lenght + 1);
+
+    if (!result) {
+        free(input);
+        return NULL;
+    }
+
+    for (int i = 0; i < lenght; i++) {
+        result[i] = input[lenght - 1 - i];
+    }
+
+    result[lenght] = '\0';
+    free(input);
+
+    return result;
+}
+
+static char* _evaluateToUpper(UnaryExpression* unary) {
+    char* input = _evaluateExpression(unary->input);
+
+    if (!input) { return NULL; }
+
+    for (char* character = input; *character; character++) {
+		*character = toupper(*character);
+	}
+
+    return input;
+}
+
+static char* _evaluateToLower(UnaryExpression* unary) {
+    char* input = _evaluateExpression(unary->input);
+
+    if (!input) { return NULL; }
+
+    for (char* character = input; *character; character++) {
+		*character = tolower(*character);
+	}
+
+    return input;
+}
+
+static char* _evaluateReplace(ReplaceExpression* replace) {
+    char* original = _evaluateExpression(replace->original);
+    char* target = _evaluateExpression(replace->target);
+    char* replacement = _evaluateExpression(replace->replacement);
+
+    if (!original || !target || !replacement) {
+        free(original);
+		free(target);
+		free(replacement);
+        return NULL;
+    }
+
+    int count = 0;
+    char* pos = original;
+    size_t targetLenght = strlen(target);
+    size_t replacementLenght = strlen(replacement);
+	size_t originalLenght;
+	size_t newLenght;
+	char* result;
+	char* destiny;
+	char* source;
+
+    while ((pos = strstr(pos, target)) != NULL) {
+        count++;
+        pos += targetLenght;
+    }
+
+    originalLenght = strlen(original);
+    newLenght = originalLenght + count * (replacementLenght - targetLenght);
+    result = malloc(newLenght + 1);
+
+    if (!result) {
+        free(original);
+		free(target);
+		free(replacement);
+        return NULL;
+    }
+
+    destiny = result;
+    source = original;
+
+    while ((pos = strstr(source, target)) != NULL) {
+        size_t bytes = pos - source;
+
+        memcpy(destiny, source, bytes);
+        destiny += bytes;
+        memcpy(destiny, replacement, replacementLenght);
+        destiny += replacementLenght;
+        source = pos + targetLenght;
+    }
+
+    strcpy(destiny, source);
+
+    free(original);
+    free(target);
+    free(replacement);
+
+    return result;
 }
 
 //------------------------------------------------------------------------------------------------------

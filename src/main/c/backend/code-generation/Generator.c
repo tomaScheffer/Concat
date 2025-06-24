@@ -65,22 +65,32 @@ static boolean _executeStatement(Statement* statement) {
 
 	switch (statement->type) {
 		case STATEMENT_DECLARATION: {
-			Symbol symbol = {
+            Symbol symbol = {
 				.kind = VARIABLE_SYMBOL,
 				.variable.type = statement->declaration->type
 			};
+            defineSymbol(_symbolTable, statement->declaration->identifier, &symbol);
+            VariableData data;
+			data.type = statement->declaration->type;
 
-			defineSymbol(_symbolTable, statement->declaration->identifier, &symbol);
-
-			if (statement->declaration->type == STRING_TYPE) {
-				char* value = _evaluateExpression(statement->declaration->expression);
-				VariableData data;
-				data.type = STRING_TYPE;
-				data.value = _duplicateString(value);
-
-				setSymbolValue(_symbolTable, statement->declaration->identifier, data);
-				free(value);
+			switch (statement->declaration->type) {
+				case STRING_TYPE: {
+					char* value = _evaluateExpression(statement->declaration->expression);
+					data.stringValue = _duplicateString(value);
+					free(value);
+					break;
+				}
+				case ATOMIC_TYPE: {
+					int value = statement->declaration->atomicValue;
+					data.atomicValue = value;
+					break;
+				}
+				default:
+					logWarning(_logger, "Unhandled declaration type");
+					break;
 			}
+
+			setSymbolValue(_symbolTable, statement->declaration->identifier, data);
 			return true;
 		}
 		case STATEMENT_OUTPUT: {
@@ -140,10 +150,17 @@ static char* _evaluateFactor(Factor* factor) {
 	switch (factor->type) {
 		case INTERPOLATION_FACTOR:
 			return _evaluateInterpolation(factor->interpolation);
-		case CONSTANT_FACTOR:
-			return _duplicateString(factor->constant->string);
-		case EXPRESSION_FACTOR:
-			return _evaluateExpression(factor->expression);
+        case EXPRESSION_FACTOR:
+            return _evaluateExpression(factor->expression);
+        case CONSTANT_FACTOR: {
+            if (factor->constant->type == ATOMIC_TYPE) {
+                char buffer[32];
+                snprintf(buffer, sizeof(buffer), "%d", factor->constant->atomic);
+                return strdup(buffer);
+            } else if (factor->constant->type == STRING_TYPE) {
+                return strdup(factor->constant->string);
+            }
+        }
 		case IDENTIFIER_FACTOR: {
 			char* identifier = factor->identifier;
 			Symbol* symbol = getSymbol(_symbolTable, identifier);
@@ -154,7 +171,19 @@ static char* _evaluateFactor(Factor* factor) {
 			}
 
 			if (symbol->kind == VARIABLE_SYMBOL) {
-				return _duplicateString(symbol->variable.value ? symbol->variable.value : "");
+                switch (symbol->variable.type) {
+                    case STRING_TYPE:
+                        return strdup(symbol->variable.stringValue);
+                    case ATOMIC_TYPE: {
+                        char buffer[32];
+                        snprintf(buffer, sizeof(buffer), "%d", symbol->variable.atomicValue);
+                        return strdup(buffer);
+                    }
+
+                    default:
+                        logWarning(_logger, "Unsupported type in interpolation for '%s'", identifier);
+                        return strdup("<?>");
+			    }
 			} else if (symbol->kind == ROUTINE_SYMBOL) {
 				_executeRoutine(symbol->routine->identifier);
 				return _duplicateString("");
@@ -188,17 +217,22 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
 
         } else if (fragment->type == EXPRESSION_FRAGMENT) {
 
-            const char* identifier = fragment->identifier;
-            Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+            char* identifier = fragment->identifier;
+            Symbol* symbol = getSymbol(_symbolTable, identifier);
 
             if (!symbol || symbol->kind != VARIABLE_SYMBOL) {
                 logError(_logger, "Undefined or non-variable identifier in interpolation: '%s'", identifier);
-                value = _duplicateString("");
+                value = _duplicateString("<?>");
             } else {
-                if (symbol->variable.value) {
-                    value = _duplicateString(symbol->variable.value);
-                } else {
-                    value = _duplicateString("");
+                if (symbol->variable.type == STRING_TYPE && symbol->variable.stringValue) {
+                    value = _duplicateString(symbol->variable.stringValue);
+                } else if (symbol->variable.type == ATOMIC_TYPE) {
+                    char buffer[32];
+                    snprintf(buffer, sizeof(buffer), "%d", symbol->variable.atomicValue);
+                    value = _duplicateString(buffer);
+                }
+                else {
+                    value = _duplicateString("<?>");
                 }
             }
 

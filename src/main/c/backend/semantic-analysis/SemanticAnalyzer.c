@@ -85,7 +85,7 @@ static boolean _analyzeDeclaration(Declaration* declaration) {
 		return false;
 	}
 
-	if (declaration->type == STRING_TYPE || declaration->type == BUFFER_TYPE) {
+	if (declaration->type == STRING_TYPE || declaration->type == ATOMIC_TYPE || declaration->type == BUFFER_TYPE) { // Por ahora siempre TRUE
 		return true;
 	} else {
 		return _analyzeExpression(declaration->expression);
@@ -117,6 +117,9 @@ static boolean _analyzeRoutine(Routine* routine) {
 
 static boolean _analyzeExpression(Expression* expression) {
     _logSemanticAnalizer(__FUNCTION__);
+
+	logDebugging(_logger, "EXPRESSION: %p", expression);
+	logDebugging(_logger, "TYPE: %d", expression->type);
 
 	if (!expression) { return false; }
 
@@ -198,12 +201,11 @@ static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment) {
 				logError(_logger, "Undefined identifier in interpolation: '%s'", identifier);
 				return false;
 			}
-
             Symbol *symbol = getSymbol(_symbolTable, identifier);
 			SymbolKind kind = symbol->kind;
 
-			if (kind != VARIABLE_SYMBOL || symbol->variable.type != STRING_TYPE) {
-				logWarning(_logger, "Interpolating non-string variable '%s'", identifier); // En este caso no considero que deba quedar en error
+			if (kind != VARIABLE_SYMBOL || symbol->variable.type == BUFFER_TYPE) {
+				logWarning(_logger, "This type of interpolating is still not supported '%s'", identifier); // En este caso no considero que deba quedar en error
 			}
 
 			return true;
@@ -218,14 +220,14 @@ static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment) {
 static boolean _analyzeIdentifierFactor(Factor* factor) {
     if (!factor || !factor->identifier) { return false; }
 
-    const char* identifier = factor->identifier;
+    char* identifier = factor->identifier;
 
-    if (!isSymbolDefined(_symbolTable, (char*) identifier)) {
+    if (!isSymbolDefined(_symbolTable, identifier)) {
         logError(_logger, "Undefined identifier: '%s'", identifier);
         return false;
     }
 
-    Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+    Symbol* symbol = getSymbol(_symbolTable, identifier);
 
     if (symbol->kind != VARIABLE_SYMBOL && symbol->kind != ROUTINE_SYMBOL) {
         logError(_logger, "Identifier '%s' must be a variable or routine.", identifier);

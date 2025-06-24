@@ -49,8 +49,8 @@ void destroySymbol(Symbol* symbol) {
 
 	free(symbol->name);
 
-	if (symbol->kind == VARIABLE_SYMBOL && symbol->variable.value) {
-		free(symbol->variable.value);
+	if (symbol->kind == VARIABLE_SYMBOL && symbol->variable.type == STRING_TYPE && symbol->variable.stringValue) {
+		free(symbol->variable.stringValue);
 	}
 
 	symbol->name = NULL;

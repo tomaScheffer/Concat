@@ -14,7 +14,12 @@ typedef enum {
 
 typedef struct {
 	ConstantType type;
-	char * value;
+	union
+	{
+		char* stringValue;
+		int atomicValue;
+	};
+	
 } VariableData;
 
 typedef struct {

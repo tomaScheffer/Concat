@@ -124,7 +124,6 @@ Routine* RoutineSemanticAction(char* identifier, StatementList* body) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Routine* routine = malloc(sizeof(Routine));
-
     if (!routine) { return NULL; }
 
     routine->identifier = identifier;
@@ -139,7 +138,6 @@ Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* rig
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
     expression->type = ARITHMETIC_EXPRESSION;
@@ -160,7 +158,6 @@ Expression* FactorExpressionSemanticAction(Factor* factor) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
     expression->type = FACTOR_EXPRESSION;
@@ -173,7 +170,6 @@ Expression* RandomExpressionSemanticAction(Expression* min, Expression* max, Exp
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
 	expression->type = EXPRESSION_RND;
@@ -195,7 +191,6 @@ Expression* ReverseExpressionSemanticAction(Expression* input) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
     expression->type = EXPRESSION_REV;
@@ -216,7 +211,6 @@ Expression* ToUpperExpressionSemanticAction(Expression* input) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
 	expression->type = EXPRESSION_TUP;
@@ -235,7 +229,6 @@ Expression* ToLowerExpressionSemanticAction(Expression* input) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
     expression->type = EXPRESSION_TLO;
@@ -255,7 +248,6 @@ Expression* LengthExpressionSemanticAction(Expression* input) {
     _logSyntacticAnalyzerAction(__FUNCTION__);
  
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
     expression->type = EXPRESSION_LEN;
@@ -275,7 +267,6 @@ Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* ta
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Expression* expression = malloc(sizeof(Expression));
-
     if (!expression) { return NULL; }
 
 	expression->type = EXPRESSION_RPL;
@@ -299,7 +290,6 @@ Factor* ConstantFactorSemanticAction(Constant* constant) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Factor* factor = malloc(sizeof(Factor));
-
     if (!factor) { return NULL; }
 
     factor->type = CONSTANT_FACTOR;
@@ -312,7 +302,6 @@ Factor* ExpressionFactorSemanticAction(Expression* expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Factor* factor = malloc(sizeof(Factor));
-
     if (!factor) { return NULL; }
 
     factor->type = EXPRESSION_FACTOR;
@@ -325,7 +314,6 @@ Factor* InterpolationFactorSemanticAction(Interpolation* interpolation) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Factor* factor = malloc(sizeof(Factor));
-
     if (!factor) { return NULL; }
 
     factor->type = INTERPOLATION_FACTOR;
@@ -352,7 +340,6 @@ Constant* AtomicConstantSemanticAction(int value) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Constant* constant = malloc(sizeof(Constant));
-
     if (!constant) { return NULL; }
 
     constant->type = ATOMIC_TYPE;
@@ -365,7 +352,6 @@ Constant* StringConstantSemanticAction(char* value) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Constant* constant = malloc(sizeof(Constant));
-
     if (!constant) { return NULL; }
 
     constant->type = STRING_TYPE;
@@ -378,7 +364,6 @@ Constant* BufferConstantSemanticAction(Buffer* buffer) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Constant* constant = malloc(sizeof(Constant));
-
     if (!constant) { return NULL; }
 
     constant->type = BUFFER_TYPE;
@@ -393,12 +378,11 @@ Declaration* StringDeclarationSemanticAction(char* identifier, char* literal) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Declaration* declaration = malloc(sizeof(Declaration));
-
     if (!declaration) { return NULL; }
 
     declaration->type = STRING_TYPE;
     declaration->identifier = identifier;
-    declaration->stringLiteral = literal;
+    declaration->stringValue = literal;
 
     return declaration;
 }
@@ -407,7 +391,6 @@ Declaration* AtomicDeclarationSemanticAction(char* identifier, int value) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Declaration* declaration = malloc(sizeof(Declaration));
-
     if (!declaration) { return NULL; }
 
     declaration->type = ATOMIC_TYPE;
@@ -421,7 +404,6 @@ Declaration* BufferDeclarationSemanticAction(char* identifier, Buffer* buffer) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Declaration* declaration = malloc(sizeof(Declaration));
-
     if (!declaration) { return NULL; }
 
     declaration->type = BUFFER_TYPE;
@@ -433,9 +415,8 @@ Declaration* BufferDeclarationSemanticAction(char* identifier, Buffer* buffer) {
 
 Declaration* StringExpressionDeclarationSemanticAction(char* identifier, Expression* expression) { 
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	// Asignaciones a expresiones (para revisar)
-    Declaration* declaration = malloc(sizeof(Declaration));
 
+    Declaration* declaration = malloc(sizeof(Declaration));
     if (!declaration) { return NULL; }
 
     declaration->type = STRING_TYPE;
@@ -451,7 +432,6 @@ Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list) {
     _logSyntacticAnalyzerAction(__FUNCTION__);
 
     Interpolation* interpolation = malloc(sizeof(Interpolation));
-
     if (!interpolation) { return NULL; }
     
     interpolation->fragments = list;
@@ -477,7 +457,6 @@ InterpolationFragment* LiteralFragmentSemanticAction(char* literal) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
 	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
-
 	if (!fragment) { return NULL; }
 
 	fragment->type = LITERAL_FRAGMENT;
@@ -489,10 +468,8 @@ InterpolationFragment* LiteralFragmentSemanticAction(char* literal) {
 
 InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-    logError(_logger, identifier);
 
 	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
-
 	if (!fragment) { return NULL; }
 
 	fragment->type = EXPRESSION_FRAGMENT;

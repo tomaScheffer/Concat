@@ -177,8 +177,8 @@ struct Declaration {
 	char* identifier;
 
 	union {
-		char* stringLiteral;
 		int atomicValue;
+		char* stringValue;
 		Buffer* bufferValue;
 		Expression* expression;
 	};

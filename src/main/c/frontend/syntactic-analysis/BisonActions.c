@@ -148,6 +148,12 @@ Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* rig
     if (!expression) { return NULL; }
 
     expression->type = ARITHMETIC_EXPRESSION;
+    expression->arithmetic = malloc(sizeof(*(expression->arithmetic)));
+
+    if (!expression->arithmetic) {
+        free(expression);
+        return NULL;
+    }
     expression->arithmetic->operator = operator;
     expression->arithmetic->left = left;
     expression->arithmetic->right = right;
@@ -176,6 +182,13 @@ Expression* RandomExpressionSemanticAction(Expression* min, Expression* max, Exp
     if (!expression) { return NULL; }
 
 	expression->type = EXPRESSION_RND;
+    expression->random = malloc(sizeof(*(expression->random)));
+    
+    if (!expression->random) {
+        free(expression);
+        return NULL;
+    }
+
 	expression->random->min = min;
 	expression->random->max = max;
 	expression->random->charset = charset;
@@ -189,6 +202,13 @@ Expression* ReverseExpressionSemanticAction(Expression* input) {
     Expression* expression = malloc(sizeof(Expression));
 
     if (!expression) { return NULL; }
+    expression->type = EXPRESSION_REV;
+    expression->unary = malloc(sizeof(*(expression->unary)));
+
+    if (!expression->unary) {
+        free(expression);
+        return NULL;
+    }
 
 	expression->type = EXPRESSION_REV;
 	expression->unary->input = input;
@@ -204,7 +224,13 @@ Expression* ToUpperExpressionSemanticAction(Expression* input) {
     if (!expression) { return NULL; }
 
 	expression->type = EXPRESSION_TUP;
-	expression->unary->input = input;
+    expression->unary = malloc(sizeof(*(expression->unary)));
+
+    if (!expression->unary) {
+        free(expression);
+        return NULL;
+    }
+    expression->unary->input = input;
 
     return expression;
 }
@@ -217,6 +243,13 @@ Expression* ToLowerExpressionSemanticAction(Expression* input) {
     if (!expression) { return NULL; }
 
     expression->type = EXPRESSION_TLO;
+    expression->unary = malloc(sizeof(*(expression->unary)));
+
+    if (!expression->unary) {
+        free(expression);
+        return NULL;
+    }
+
 	expression->unary->input = input;
 
     return expression;
@@ -230,6 +263,13 @@ Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* ta
     if (!expression) { return NULL; }
 
 	expression->type = EXPRESSION_RPL;
+    expression->replace = malloc(sizeof(*(expression->replace)));
+    
+    if (!expression->replace) {
+        free(expression);
+        return NULL;
+    }
+
 	expression->replace->original = original;
 	expression->replace->target = target;
 	expression->replace->replacement = replacement;

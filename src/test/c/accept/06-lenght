@@ -1,1 +1,1 @@
-Atomic lenght = LEN(inputString);
+String lenght = LEN("LENGHT");

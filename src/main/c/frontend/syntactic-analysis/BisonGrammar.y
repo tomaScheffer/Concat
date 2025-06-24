@@ -104,6 +104,7 @@
 
 program:
 	statement_list													{ $$ = ProgramSemanticAction(currentCompilerState(), $1); }
+	| %empty														{ $$ = ProgramSemanticAction(currentCompilerState(), NULL);; }
 	;
 
 statement_list:

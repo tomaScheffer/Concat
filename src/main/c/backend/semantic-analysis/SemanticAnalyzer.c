@@ -249,9 +249,11 @@ boolean performSemanticAnalysis(Program* program, SymbolTable* symbolTable) {
     _logSemanticAnalizer(__FUNCTION__);
     boolean status = false;
 
-    if (program == NULL || program->statements == NULL) {
+    if (program == NULL) {
         logError(_logger, "Invalid program.");
-    }
+    } else if (program->statements == NULL) {
+		status = true;
+	}
     else {
         status = _analyzeStatementList(program->statements);
     }

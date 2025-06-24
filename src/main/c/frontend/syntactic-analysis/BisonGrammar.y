@@ -64,7 +64,7 @@
 %token <token> STRING_START_TOKEN STRING_END_TOKEN
 
 %token <atomic> ATOMIC_TOKEN
-%token <string> STRING_TOKEN IDENTIFIER_TOKEN INTERPOLATED_IDENTIFIER_TOKEN
+%token <string> STRING_TOKEN IDENTIFIER_TOKEN INTERPOLATED_IDENTIFIER_TOKEN ROUTINE_CALL_TOKEN
 %token <buffer> BUFFER_TOKEN
 
 %token <token> ASSIGN_TOKEN COLON_TOKEN SEMICOLON_TOKEN COMMA_TOKEN
@@ -119,6 +119,7 @@ statement:
 	| routine														{ $$ = RoutineStatementSemanticAction($1); }
 	| string_operation												{ $$ = StringOperationStatementSemanticAction($1); }
 	| OUT_TOKEN expression											{ $$ = OutStatementSemanticAction($2); }
+	| ROUTINE_CALL_TOKEN											{ $$ = RoutineCallStatementSemanticAction($1); }
 
 expression:
 	  expression ADD_TOKEN expression								{ $$ = ArithmeticExpressionSemanticAction($1, $3, ADDITION); }

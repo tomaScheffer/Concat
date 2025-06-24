@@ -24,7 +24,6 @@ const int main(const int count, const char ** arguments) {
 	initializeSyntacticAnalyzerModule();
 	initializeAbstractSyntaxTreeModule();
 	initializeCalculatorModule();
-	initializeGeneratorModule();
 
 	// Logs the arguments of the application.
 	for (int k = 0; k < count; ++k) {
@@ -45,10 +44,12 @@ const int main(const int count, const char ** arguments) {
 		
 		logDebugging(logger, "Parsing succeeded. Starting semantic analysis...");
 
-		if (performSemanticAnalysis(program)) {
+		SymbolTable* table = createSymbolTable();
+
+		if (performSemanticAnalysis(program, table)) {
 			logDebugging(logger, "Semantic analysis succeeded. Starting code generation...");
 
-			generate(&compilerState);
+			generate(&compilerState, table);
 		}
 		else {
 			logError(logger, "Semantic analysis failed.");
@@ -63,7 +64,6 @@ const int main(const int count, const char ** arguments) {
 	logDebugging(logger, "Releasing AST resources...");
 	releaseProgram(program);
 	logDebugging(logger, "Releasing modules resources...");
-	shutdownGeneratorModule();
 	shutdownCalculatorModule();
 	shutdownAbstractSyntaxTreeModule();
 	shutdownSyntacticAnalyzerModule();

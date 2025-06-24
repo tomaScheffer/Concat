@@ -115,25 +115,40 @@ Token InterpolatedIdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzer
     size_t len = strlen(lexeme);
 
     if (len >= 4 && lexeme[0] == '$' && lexeme[1] == '{' && lexeme[len - 1] == '}') {
-        size_t content_len = len - 3;
-        char* content = malloc(content_len + 1);
+        size_t contentLen = len - 3;
+        char* content = malloc(contentLen + 1);
 		
         if (!content) {
             destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
             return UNKNOWN;
         }
-        strncpy(content, lexeme + 2, content_len);
-        content[content_len] = '\0';
+        strncpy(content, lexeme + 2, contentLen);
+        content[contentLen] = '\0';
 
         lexicalAnalyzerContext->semanticValue->string = content;
     } else {
         lexicalAnalyzerContext->semanticValue->string = strdup(lexeme);
     }
-
 	// logDebugging(_logger, lexicalAnalyzerContext->semanticValue->string);
     destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 
     return INTERPOLATED_IDENTIFIER_TOKEN;
+}
+
+Token RoutineCallLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext) {
+	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+
+	char* lexeme = lexicalAnalyzerContext->lexeme;
+	size_t len = strlen(lexeme);
+	char* identifier = strdup(lexeme);
+	
+	if (len) { identifier[len-1] = '\0'; }
+
+	lexicalAnalyzerContext->semanticValue->string = identifier;
+
+	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+
+	return ROUTINE_CALL_TOKEN;
 }
 
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {

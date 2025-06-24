@@ -62,6 +62,7 @@
 "}"                                     { return SymbolLexemeAction(createLexicalAnalyzerContext(), CLOSE_BRACE_TOKEN); }
 
 [A-Za-z_][A-Za-z0-9_]*                  { return IdentifierLexemeAction(createLexicalAnalyzerContext()); }
+[a-zA-Z_][a-zA-Z0-9_]*"!"				{ return RoutineCallLexemeAction(createLexicalAnalyzerContext()); }
 
 \"                                      { BEGIN(INTERPOLATION); return BeginInterpolationLexemeAction(createLexicalAnalyzerContext()); }
 <INTERPOLATION>\"                       { BEGIN(INITIAL); return EndInterpolationLexemeAction(createLexicalAnalyzerContext()); }

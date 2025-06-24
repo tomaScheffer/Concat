@@ -10,15 +10,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/** Initialize module's internal state. */
-void initializeGeneratorModule();
-
-/** Shutdown module's internal state. */
-void shutdownGeneratorModule();
-
 /**
  * Generates the final output using the current compiler state.
  */
-void generate(CompilerState * compilerState);
+void generate(CompilerState* compilerState, SymbolTable* symbolTable);
 
 #endif

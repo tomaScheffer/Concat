@@ -74,6 +74,7 @@ void destroySymbolTable(SymbolTable* table) {
 boolean defineSymbol(SymbolTable* table, char* name, Symbol symbol) {
     _logSymbolTable(__FUNCTION__);
 
+    if (!table || !name) { return false; }
     if (isSymbolDefined(table, name)) { return false; }
 
     if (table->size >= table->capacity) {
@@ -91,6 +92,8 @@ boolean defineSymbol(SymbolTable* table, char* name, Symbol symbol) {
 
 boolean isSymbolDefined(SymbolTable* table, char* name) {
     _logSymbolTable(__FUNCTION__);
+    
+    if (!table || !name) { return false; }
 
     for (int i = 0; i < table->size; i++) {
         if (strcmp(table->entries[i].name, name) == 0) {
@@ -123,6 +126,6 @@ boolean setSymbolValue(SymbolTable* table, char* name, VariableData value) {
     if (!symbol || symbol->kind != VARIABLE_SYMBOL) { return false; }
 
 	symbol->variable = value;
-    
+
 	return true;
 }

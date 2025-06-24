@@ -8,6 +8,6 @@
 
 // ------------------------------------------------------------------------------------
 
-boolean performSemanticAnalysis(Program* program);
+boolean performSemanticAnalysis(Program* program, SymbolTable* symbolTable);
 
 #endif

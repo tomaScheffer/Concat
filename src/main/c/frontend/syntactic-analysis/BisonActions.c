@@ -74,8 +74,8 @@ Statement* RoutineStatementSemanticAction(Routine* routine) {
     return statement;
 }
 
-/*
-Statement* RoutineCallSemanticAction(char* identifier) {
+
+Statement* RoutineCallStatementSemanticAction(char* identifier) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
     Statement* statement = malloc(sizeof(Statement));
@@ -86,7 +86,7 @@ Statement* RoutineCallSemanticAction(char* identifier) {
     statement->routineCallName = identifier;
 
     return statement;
-}*/
+}
 
 Statement* StringOperationStatementSemanticAction(StringOperation* operation) {
     _logSyntacticAnalyzerAction(__FUNCTION__);

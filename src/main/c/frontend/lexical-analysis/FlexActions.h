@@ -34,6 +34,7 @@ Token StringLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token t
 Token IdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
 Token InterpolatedIdentifierLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
 Token UnknownLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
+Token RoutineCallLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext);
 
 Token BeginInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token EndInterpolationLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);

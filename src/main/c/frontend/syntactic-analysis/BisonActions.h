@@ -22,7 +22,7 @@ Program* ProgramSemanticAction(CompilerState *compilerState, StatementList* stat
 StatementList* StatementListSemanticAction(StatementList* next, Statement* statement);
 
 Statement* RoutineStatementSemanticAction(Routine* routine);
-// Statement* RoutineCallSemanticAction(char* identifier);
+Statement* RoutineCallStatementSemanticAction(char* identifier);
 Statement* StringOperationStatementSemanticAction(StringOperation* operation);
 Statement* OutStatementSemanticAction(Expression* expression);
 Statement* DeclarationStatementSemanticAction(Declaration* declaration);

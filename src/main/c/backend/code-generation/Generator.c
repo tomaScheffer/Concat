@@ -7,17 +7,8 @@ const char _indentationSize = 4;
 static Logger* _logger = NULL;
 static SymbolTable* _symbolTable = NULL;
 
-void initializeGeneratorModule() {
-	_logger = createLogger("Generator");
-}
-
-void shutdownGeneratorModule() {
-	if (_logger != NULL) {
-		destroyLogger(_logger);
-	}
-}
-
 //------------------------------------------------------------------------------------------------------
+
 /** PRIVATE FUNCTIONS */
 
 static boolean _executeStatementList(StatementList* list);
@@ -25,8 +16,8 @@ static boolean _executeStatement(Statement* statement);
 static char* _evaluateExpression(Expression* expression);
 static char* _evaluateFactor(Factor* factor);
 static char* _evaluateInterpolation(Interpolation* interpolation);
-static char* _duplicateString(const char* text);
-static void _executeRoutine(Routine* routine);
+static char* _duplicateString(char* text);
+static void _executeRoutine(char* identifier);
 
 static void _generateProgram(Program* program);
 static void _generatePrologue(void);
@@ -36,13 +27,33 @@ static void _output(const unsigned int indentationLevel, const char* const forma
 
 //------------------------------------------------------------------------------------------------------
 
+static void _initializeGeneratorModule(SymbolTable* symbolTable) {
+	_logger = createLogger("Generator");
+	_symbolTable = symbolTable;
+}
+
+static void _shutdownGeneratorModule() {
+	if (_logger != NULL) {
+		destroyLogger(_logger);
+	}
+	_symbolTable = NULL;
+}
+
+static void _logGenerator(const char* functionName) {
+	logDebugging(_logger, "%s", functionName);
+}
+
 static boolean _executeStatementList(StatementList* list) {
+	_logGenerator(__FUNCTION__);
+
 	if (!list) { return true; }
 
 	return _executeStatementList(list->next) && _executeStatement(list->statement);
 }
 
 static boolean _executeStatement(Statement* statement) {
+	_logGenerator(__FUNCTION__);
+
 	if (!statement) { return false; }
 
 	switch (statement->type) {
@@ -73,6 +84,12 @@ static boolean _executeStatement(Statement* statement) {
 
 			return true;
 		}
+		case STATEMENT_ROUTINE:
+			return true;
+		case STATEMENT_ROUTINE_CALL:
+			_executeRoutine(statement->routineCallName);
+
+			return true;
 		default:
 			logWarning(_logger, "Unsupported statement type for execution.");
 			return true;
@@ -80,6 +97,8 @@ static boolean _executeStatement(Statement* statement) {
 }
 
 static char* _evaluateExpression(Expression* expression) {
+	_logGenerator(__FUNCTION__);
+
 	if (!expression) { return _duplicateString(""); }
 
 	switch (expression->type) {
@@ -93,6 +112,8 @@ static char* _evaluateExpression(Expression* expression) {
 }
 
 static char* _evaluateFactor(Factor* factor) {
+	_logGenerator(__FUNCTION__);
+
 	if (!factor) { return _duplicateString(""); }
 
 	switch (factor->type) {
@@ -114,7 +135,7 @@ static char* _evaluateFactor(Factor* factor) {
 			if (symbol->kind == VARIABLE_SYMBOL) {
 				return _duplicateString(symbol->variable.value ? symbol->variable.value : "");
 			} else if (symbol->kind == ROUTINE_SYMBOL) {
-				_executeRoutine(symbol->routine);
+				_executeRoutine(symbol->routine->identifier);
 				return _duplicateString("");
 			} else {
 				logError(_logger, "Identifier '%s' is not a valid variable or routine.", identifier);
@@ -128,10 +149,11 @@ static char* _evaluateFactor(Factor* factor) {
 }
 
 static char* _evaluateInterpolation(Interpolation* interpolation) {
+	_logGenerator(__FUNCTION__);
+
     if (!interpolation || !interpolation->fragments) { 
         return _duplicateString(""); 
     }
-	logDebugging(_logger, "Aca en interpolation, RESULT:");
 
     InterpolationFragmentList* current = interpolation->fragments;
     char* result = _duplicateString("");
@@ -170,6 +192,7 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
             logError(_logger, "Out of memory during interpolation evaluation");
             free(result);
             free(value);
+
             return NULL;
         }
         strcpy(newResult, result);
@@ -185,7 +208,9 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
     return result;
 }
 
-static char* _duplicateString(const char * text) {
+static char* _duplicateString(char* text) {
+	_logGenerator(__FUNCTION__);
+
 	if (!text) { return NULL; }
 
 	char* copy = malloc(strlen(text) + 1);
@@ -194,11 +219,27 @@ static char* _duplicateString(const char * text) {
 	return copy;
 }
 
-void _executeRoutine(Routine* routine) {
-    if (!routine) { return; }
+static void _executeRoutine(char* identifier) {
+	_logGenerator(__FUNCTION__);
 
-    _executeStatementList(routine->body);
+	if (!identifier) { return; }
+
+	Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+
+	if (!symbol) {
+		logError(_logger, "Routine '%s' is not defined", identifier);
+		return;
+	}
+
+	if (symbol->kind != ROUTINE_SYMBOL || !symbol->routine) {
+		logError(_logger, "Symbol '%s' is not a routine", identifier);
+		return;
+	}
+
+	logDebugging(_logger, "Executing routine: %s", identifier);
+	_executeStatementList(symbol->routine->body);
 }
+
 //------------------------------------------------------------------------------------------------------
 
 /**
@@ -254,10 +295,16 @@ static void _output(const unsigned int indentationLevel, const char* const forma
 
 /** PUBLIC FUNCTIONS */
 
-void generate(CompilerState* compilerState) {
+void generate(CompilerState* compilerState, SymbolTable* symbolTable) {
+	_initializeGeneratorModule(symbolTable);
+	
 	logDebugging(_logger, "Generating final output...");
+	
 	_generatePrologue();
 	_generateProgram(compilerState->abstractSyntaxtTree);
 	_generateEpilogue(compilerState->value);
+	
 	logDebugging(_logger, "Generation is done.");
+
+	_shutdownGeneratorModule();
 }

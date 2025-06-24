@@ -17,19 +17,16 @@ static boolean _analyzeIdentifierFactor(Factor* factor);
 
 //--------------------------------------------------------------------------
 
-void initializeSemanticAnalyzerModule() {
+static void _initializeSemanticAnalyzerModule(SymbolTable* symbolTable) {
 	_logger = createLogger("SemanticAnalyzer");
-	_symbolTable = createSymbolTable();
+	_symbolTable = symbolTable;
 }
 
-void shutdownSemanticAnalyzerModule() {
-	destroySymbolTable(_symbolTable);
+static void _shutdownSemanticAnalyzerModule() {
 	destroyLogger(_logger);
     _logger = NULL;
     _symbolTable = NULL;
 }
-
-//--------------------------------------------------------------------------
 
 static void _logSemanticAnalizer(const char* functionName) {
 	logDebugging(_logger, "%s", functionName);
@@ -231,8 +228,9 @@ static boolean _analyzeIdentifierFactor(Factor* factor) {
 
 //--------------------------------------------------------------------------
 
-boolean performSemanticAnalysis(Program* program) {
-    initializeSemanticAnalyzerModule();
+boolean performSemanticAnalysis(Program* program, SymbolTable* symbolTable) {
+    _initializeSemanticAnalyzerModule(symbolTable);
+
     _logSemanticAnalizer(__FUNCTION__);
     boolean status = false;
 
@@ -243,7 +241,7 @@ boolean performSemanticAnalysis(Program* program) {
         status = _analyzeStatementList(program->statements);
     }
     
-    shutdownSemanticAnalyzerModule();
+    _shutdownSemanticAnalyzerModule();
 
     return status;
 }

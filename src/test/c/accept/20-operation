@@ -1,0 +1,2 @@
+String s = RND(3, 5, "abc");
+OUT("Random: ${s}");

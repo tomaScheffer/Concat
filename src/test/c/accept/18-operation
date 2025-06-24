@@ -1,0 +1,2 @@
+String l = LEN("abcdefg");
+OUT("Lenght: ${l}");

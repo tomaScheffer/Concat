@@ -1,0 +1,4 @@
+FUN hola {
+    OUT("Hola mundo");
+};
+hola!;

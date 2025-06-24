@@ -1,0 +1,6 @@
+FUN sumar {
+    Atomic a = 1;
+    Atomic b = 2;
+    OUT("${a}${b}");
+};
+sumar!;

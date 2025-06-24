@@ -1,0 +1,2 @@
+String s = REV("hola");
+OUT("Reverse: ${s}");

@@ -1,0 +1,2 @@
+String s = RPL("abcabc", "a", "x");
+OUT("Replace: ${s}");

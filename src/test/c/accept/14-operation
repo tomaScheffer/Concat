@@ -1,0 +1,3 @@
+String x = "Test";
+String y = "ing";
+OUT("${x}${y}");

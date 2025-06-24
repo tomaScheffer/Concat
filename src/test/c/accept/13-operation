@@ -1,0 +1,3 @@
+Atomic a = 3;
+Atomic b = 7;
+OUT("Suma: ${a}${b}");

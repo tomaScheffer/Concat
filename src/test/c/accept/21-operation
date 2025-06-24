@@ -1,0 +1,2 @@
+String s = ECP("hola", "key");
+OUT("${s}");

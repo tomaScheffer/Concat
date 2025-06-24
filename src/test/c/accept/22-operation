@@ -1,0 +1,4 @@
+String msg = "secret";
+String key = "k";
+String enc = ECP(msg, key);
+OUT("Encrypted: ${enc}");

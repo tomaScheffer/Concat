@@ -27,7 +27,6 @@
     Declaration* declaration;
 	Statement* statement;
 	StatementList* statementList;
-	StringOperation* stringOperation;
 	Interpolation* interpolation;
 	InterpolationFragment* interpolation_fragment;
 	InterpolationFragmentList* interpolation_fragment_list;
@@ -50,7 +49,6 @@
 %destructor { releaseDeclaration($$); } <declaration>
 %destructor { releaseStatement($$); } <statement>
 %destructor { releaseStatementList($$); } <statementList>
-%destructor { releaseStringOperation($$); } <stringOperation>
 %destructor { releaseInterpolation($$); } <interpolation>
 %destructor { releaseInterpolationFragment($$); } <interpolation_fragment>
 %destructor { releaseInterpolationFragmentList($$); } <interpolation_fragment_list>
@@ -87,7 +85,6 @@
 %type <statement> statement
 %type <declaration> declaration
 %type <statementList> statement_list
-%type <stringOperation> string_operation
 %type <interpolation> interpolation
 %type <interpolation_fragment> interpolation_fragment
 %type <interpolation_fragment_list> interpolation_fragment_list
@@ -117,7 +114,6 @@ statement:
 	declaration														{ $$ = DeclarationStatementSemanticAction($1); }
 	| expression													{ $$ = ExpressionStatementSemanticAction($1); }
 	| routine														{ $$ = RoutineStatementSemanticAction($1); }
-	| string_operation												{ $$ = StringOperationStatementSemanticAction($1); }
 	| OUT_TOKEN expression											{ $$ = OutStatementSemanticAction($2); }
 	| ROUTINE_CALL_TOKEN											{ $$ = RoutineCallStatementSemanticAction($1); }
 
@@ -126,6 +122,11 @@ expression:
 	| expression SUB_TOKEN expression								{ $$ = ArithmeticExpressionSemanticAction($1, $3, SUBTRACTION); }
 	| expression MUL_TOKEN expression								{ $$ = ArithmeticExpressionSemanticAction($1, $3, MULTIPLICATION); }
 	| expression DIV_TOKEN expression								{ $$ = ArithmeticExpressionSemanticAction($1, $3, DIVISION); }
+	| RND_TOKEN OPEN_PAREN_TOKEN expression COMMA_TOKEN expression COMMA_TOKEN expression CLOSE_PAREN_TOKEN { $$ = RandomExpressionSemanticAction($3, $5, $7); }
+	| REV_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ReverseExpressionSemanticAction($3); }
+	| TUP_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ToUpperExpressionSemanticAction($3); }
+	| TLO_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ToLowerExpressionSemanticAction($3); }
+	| RPL_TOKEN OPEN_PAREN_TOKEN expression COMMA_TOKEN expression COMMA_TOKEN expression CLOSE_PAREN_TOKEN { $$ = ReplaceExpressionSemanticAction($3, $5, $7); }
 	| factor														{ $$ = FactorExpressionSemanticAction($1); }
 	;
 
@@ -150,13 +151,6 @@ declaration:
 	ATOMIC_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN ATOMIC_TOKEN 		{ $$ = AtomicDeclarationSemanticAction($2, $4); }
 	| BUFFER_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN BUFFER_TOKEN		{ $$ = BufferDeclarationSemanticAction($2, $4); }
 	| STRING_TYPE_TOKEN IDENTIFIER_TOKEN ASSIGN_TOKEN expression		{ $$ = StringExpressionDeclarationSemanticAction($2, $4); }
-	;
-
-string_operation:
-	  REV_TOKEN OPEN_PAREN_TOKEN interpolation CLOSE_PAREN_TOKEN			{ $$ = ReverseStringOperationSemanticAction($3); }
-	| TUP_TOKEN OPEN_PAREN_TOKEN interpolation CLOSE_PAREN_TOKEN			{ $$ = ToUpperStringOperationSemanticAction($3); }
-	| TLO_TOKEN OPEN_PAREN_TOKEN interpolation CLOSE_PAREN_TOKEN			{ $$ = ToLowerStringOperationSemanticAction($3); }
-	| RPL_TOKEN OPEN_PAREN_TOKEN interpolation COMMA_TOKEN interpolation COMMA_TOKEN interpolation CLOSE_PAREN_TOKEN { $$ = ReplaceStringOperationSemanticAction($3, $5, $7); }
 	;
 
 interpolation:

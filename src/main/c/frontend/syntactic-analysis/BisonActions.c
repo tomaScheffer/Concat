@@ -88,19 +88,6 @@ Statement* RoutineCallStatementSemanticAction(char* identifier) {
     return statement;
 }
 
-Statement* StringOperationStatementSemanticAction(StringOperation* operation) {
-    _logSyntacticAnalyzerAction(__FUNCTION__);
-
-    Statement* statement = malloc(sizeof(Statement));
-    
-    if (!statement) { return NULL; }
-
-    statement->stringOperation = operation;
-    statement->type = STATEMENT_STRING_OPERATION;
-
-    return statement;
-}
-
 Statement* OutStatementSemanticAction(Expression* expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
@@ -161,9 +148,9 @@ Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* rig
     if (!expression) { return NULL; }
 
     expression->type = ARITHMETIC_EXPRESSION;
-    expression->operator = operator;
-    expression->leftExpression = left;
-    expression->rightExpression = right;
+    expression->arithmetic->operator = operator;
+    expression->arithmetic->left = left;
+    expression->arithmetic->right = right;
 
     return expression;
 }
@@ -177,6 +164,75 @@ Expression* FactorExpressionSemanticAction(Factor* factor) {
 
     expression->type = FACTOR_EXPRESSION;
     expression->factor = factor;
+
+    return expression;
+}
+
+Expression* RandomExpressionSemanticAction(Expression* min, Expression* max, Expression* charset) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+	expression->type = EXPRESSION_RND;
+	expression->random->min = min;
+	expression->random->max = max;
+	expression->random->charset = charset;
+
+    return expression;
+}
+
+Expression* ReverseExpressionSemanticAction(Expression* input) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+	expression->type = EXPRESSION_REV;
+	expression->unary->input = input;
+
+    return expression;
+}
+
+Expression* ToUpperExpressionSemanticAction(Expression* input) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+	expression->type = EXPRESSION_TUP;
+	expression->unary->input = input;
+
+    return expression;
+}
+
+Expression* ToLowerExpressionSemanticAction(Expression* input) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+    expression->type = EXPRESSION_TLO;
+	expression->unary->input = input;
+
+    return expression;
+}
+
+Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* target, Expression* replacement) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+	expression->type = EXPRESSION_RPL;
+	expression->replace->original = original;
+	expression->replace->target = target;
+	expression->replace->replacement = replacement;
 
     return expression;
 }
@@ -331,66 +387,6 @@ Declaration* StringExpressionDeclarationSemanticAction(char* identifier, Express
     declaration->expression = expression;
 
     return declaration;
-}
-
-// ---------------------------------------------------------------------------------------
-
-StringOperation* ReverseStringOperationSemanticAction(Interpolation* interpolation) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-
-	StringOperation* operation = malloc(sizeof(StringOperation));
-	if (!operation) return NULL;
-
-	operation->type = STRING_OP_REVERSE;
-	operation->arg1 = interpolation;
-	operation->arg2 = NULL;
-	operation->arg3 = NULL;
-
-	return operation;
-}
-
-StringOperation* ToUpperStringOperationSemanticAction(Interpolation* interpolation) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-
-	StringOperation* operation = malloc(sizeof(StringOperation));
-
-	if (!operation) { return NULL; };
-
-	operation->type = STRING_OP_TO_UPPER;
-	operation->arg1 = interpolation;
-	operation->arg2 = NULL;
-	operation->arg3 = NULL;
-
-	return operation;
-}
-
-StringOperation* ToLowerStringOperationSemanticAction(Interpolation* interpolation) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-
-	StringOperation* operation = malloc(sizeof(StringOperation));
-
-	if (!operation) { return NULL; };
-
-	operation->type = STRING_OP_TO_LOWER;
-	operation->arg1 = interpolation;
-	operation->arg2 = NULL;
-	operation->arg3 = NULL;
-
-	return operation;
-}
-
-StringOperation* ReplaceStringOperationSemanticAction(Interpolation* original, Interpolation* target, Interpolation* replacement) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-
-	StringOperation* operation = malloc(sizeof(StringOperation));
-	if (!operation) { return NULL; };
-
-	operation->type = STRING_OP_REPLACE;
-	operation->arg1 = original;
-	operation->arg2 = target;
-	operation->arg3 = replacement;
-
-	return operation;
 }
 
 // ---------------------------------------------------------------------------------------

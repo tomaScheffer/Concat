@@ -195,8 +195,8 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
 
             return NULL;
         }
-        strcpy(newResult, result);
-        strcat(newResult, value);
+        strcpy(newResult, value);
+        strcat(newResult, result);
 
         free(result);
         free(value);

@@ -57,9 +57,6 @@ static boolean _analyzeStatement(Statement* statement) {
 			}
 			return true;
 		}
-		case STATEMENT_STRING_OPERATION:
-			// TODO: revisar x si requiere identificadores
-			return true;
 		case STATEMENT_OUTPUT:
 			return _analyzeExpression(statement->expression);
 		default:
@@ -126,8 +123,8 @@ static boolean _analyzeExpression(Expression* expression) {
 
 	switch (expression->type) {
 		case ARITHMETIC_EXPRESSION:
-			return _analyzeExpression(expression->leftExpression) &&
-				   _analyzeExpression(expression->rightExpression);
+			return _analyzeExpression(expression->arithmetic->left) &&
+				   _analyzeExpression(expression->arithmetic->right);
 		case FACTOR_EXPRESSION:
 			return _analyzeFactor(expression->factor);
 		default:

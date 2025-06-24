@@ -22,7 +22,6 @@ typedef enum ConstantType ConstantType;
 typedef enum FactorType FactorType;
 typedef enum StatementType StatementType;
 typedef enum InterpolationFragmentType InterpolationFragmentType;
-typedef enum StringOperationType StringOperationType;
 
 typedef struct Buffer Buffer;
 typedef struct Constant Constant;
@@ -31,12 +30,16 @@ typedef struct Factor Factor;
 typedef struct Interpolation Interpolation;
 typedef struct InterpolationFragment InterpolationFragment;
 typedef struct InterpolationFragmentList InterpolationFragmentList;
-typedef struct StringOperation StringOperation;
 typedef struct Declaration Declaration;
 typedef struct StatementList StatementList;
 typedef struct Statement Statement;
 typedef struct Routine Routine;
 typedef struct Program Program;
+
+typedef struct ArithmeticExpression ArithmeticExpression;
+typedef struct UnaryStringExpression UnaryStringExpression;
+typedef struct RandomExpression RandomExpression;
+typedef struct ReplaceExpression ReplaceExpression;
 
 /**
 * Node types for the Abstract Syntax Tree (AST).
@@ -44,7 +47,12 @@ typedef struct Program Program;
 
 enum ExpressionType {
 	FACTOR_EXPRESSION,
-	ARITHMETIC_EXPRESSION
+	ARITHMETIC_EXPRESSION,
+	EXPRESSION_RND,
+	EXPRESSION_REV,
+	EXPRESSION_TUP,
+	EXPRESSION_TLO,
+	EXPRESSION_RPL
 };
 
 enum ArithmeticOperator {
@@ -52,13 +60,6 @@ enum ArithmeticOperator {
 	DIVISION,
 	MULTIPLICATION,
 	SUBTRACTION
-};
-
-enum StringOperationType {
-	STRING_OP_REVERSE,
-	STRING_OP_TO_UPPER,
-	STRING_OP_TO_LOWER,
-	STRING_OP_REPLACE
 };
 
 enum ConstantType {
@@ -79,7 +80,6 @@ enum StatementType {
 	STATEMENT_EXPRESSION,
 	STATEMENT_ROUTINE,
 	STATEMENT_ROUTINE_CALL,
-	STATEMENT_STRING_OPERATION,
 	STATEMENT_OUTPUT
 };
 
@@ -107,19 +107,38 @@ struct Constant {
 	};
 };
 
+struct ArithmeticExpression {
+	ArithmeticOperator operator;
+	Expression* left;
+	Expression* right;
+};
+
+struct UnaryStringExpression {
+	Expression* input;
+};
+
+struct RandomExpression {
+	Expression* min;
+	Expression* max;
+	Expression* charset;
+};
+
+struct ReplaceExpression {
+	Expression* original;
+	Expression* target;
+	Expression* replacement;
+};
+
 struct Expression {
 	ExpressionType type;
 
 	union {
 		Factor* factor;
-		
-		struct {
-			ArithmeticOperator operator;
-			Expression* leftExpression;
-			Expression* rightExpression;
-		};
+		ArithmeticExpression* arithmetic;
+		UnaryStringExpression* unary;
+		RandomExpression* random;
+		ReplaceExpression* replace;
 	};
-
 };
 
 struct Factor {
@@ -152,13 +171,6 @@ struct Interpolation {
 	InterpolationFragmentList* fragments;
 };
 
-struct StringOperation {
-	StringOperationType type;
-	Interpolation* arg1;
-	Interpolation* arg2;
-	Interpolation* arg3;
-};
-
 struct Declaration {
 	ConstantType type;
 	char* identifier;
@@ -184,7 +196,6 @@ struct Statement {
 		Declaration* declaration;
 		struct Routine* routine;
 		Expression* expression;
-		StringOperation* stringOperation;
 	};
 };
 

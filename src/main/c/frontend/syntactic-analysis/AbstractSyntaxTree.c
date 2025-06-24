@@ -39,6 +39,7 @@ Interpolation* createInterpolation() {
 
 void releaseFactor(Factor* factor) {
 	if (!factor) { return; }
+
 	switch (factor->type) {
 		case CONSTANT_FACTOR:
 			free(factor->constant);
@@ -53,17 +54,45 @@ void releaseFactor(Factor* factor) {
 	free(factor);
 }
 
-void releaseExpression(Expression* expr) {
-	if (!expr) { return; }
+void releaseExpression(Expression* expression) {
+	if (!expression) return;
 
-	if (expr->type == FACTOR_EXPRESSION) {
-		releaseFactor(expr->factor);
-	} else {
-		releaseExpression(expr->leftExpression);
-		releaseExpression(expr->rightExpression);
+	switch (expression->type) {
+		case FACTOR_EXPRESSION:
+			releaseFactor(expression->factor);
+			break;
+
+		case ARITHMETIC_EXPRESSION:
+			releaseExpression(expression->arithmetic->left);
+			releaseExpression(expression->arithmetic->right);
+			break;
+
+		case EXPRESSION_RND:
+			releaseExpression(expression->random->min);
+			releaseExpression(expression->random->max);
+			releaseExpression(expression->random->charset);
+			break;
+
+		case EXPRESSION_REV:
+		case EXPRESSION_TUP:
+		case EXPRESSION_TLO:
+			releaseExpression(expression->unary->input);
+			break;
+
+		case EXPRESSION_RPL:
+			releaseExpression(expression->replace->original);
+			releaseExpression(expression->replace->target);
+			releaseExpression(expression->replace->replacement);
+			break;
+
+		default:
+			logWarning(_logger, "releaseExpression: unhandled ExpressionType = %d", expression->type);
+			break;
 	}
-	free(expr);
+
+	free(expression);
 }
+
 
 void releaseStatementList(StatementList* list) {
 	while (list) {

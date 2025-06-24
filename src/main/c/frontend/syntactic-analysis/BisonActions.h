@@ -23,7 +23,6 @@ StatementList* StatementListSemanticAction(StatementList* next, Statement* state
 
 Statement* RoutineStatementSemanticAction(Routine* routine);
 Statement* RoutineCallStatementSemanticAction(char* identifier);
-Statement* StringOperationStatementSemanticAction(StringOperation* operation);
 Statement* OutStatementSemanticAction(Expression* expression);
 Statement* DeclarationStatementSemanticAction(Declaration* declaration);
 Statement* ExpressionStatementSemanticAction(Expression* expression);
@@ -36,6 +35,12 @@ Declaration* StringExpressionDeclarationSemanticAction(char* id, Expression* exp
 
 Expression* FactorExpressionSemanticAction(Factor* factor);
 Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* right, ArithmeticOperator operator);
+Expression* RandomExpressionSemanticAction(Expression* min, Expression* max, Expression* charset);
+Expression* ReverseExpressionSemanticAction(Expression* input);
+Expression* ToUpperExpressionSemanticAction(Expression* input);
+Expression* ToLowerExpressionSemanticAction(Expression* input);
+Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* target, Expression* replacement);
+
 Factor* ConstantFactorSemanticAction(Constant* constant);
 Factor* ExpressionFactorSemanticAction(Expression* expression);
 Factor* InterpolationFactorSemanticAction(Interpolation* interpolation);
@@ -44,11 +49,6 @@ Factor* IdentifierFactorSemanticAction(char* identifier);
 Constant* AtomicConstantSemanticAction(int value);
 Constant* StringConstantSemanticAction(char* value);
 Constant* BufferConstantSemanticAction(Buffer* value);
-
-StringOperation* ReverseStringOperationSemanticAction(Interpolation* interpolation);
-StringOperation* ToUpperStringOperationSemanticAction(Interpolation* interpolation);
-StringOperation* ToLowerStringOperationSemanticAction(Interpolation* interpolation);
-StringOperation* ReplaceStringOperationSemanticAction(Interpolation* original, Interpolation* target, Interpolation* replacement);
 
 Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list);
 InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* next, InterpolationFragment* fragment);

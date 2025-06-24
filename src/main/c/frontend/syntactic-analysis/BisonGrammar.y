@@ -130,9 +130,9 @@ expression:
 
 factor:
 	  OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN					{ $$ = ExpressionFactorSemanticAction($2); }
+	| IDENTIFIER_TOKEN												{ $$ = IdentifierFactorSemanticAction($1); }
 	| constant														{ $$ = ConstantFactorSemanticAction($1); }
 	| interpolation													{ $$ = InterpolationFactorSemanticAction($1); }
-	| IDENTIFIER_TOKEN												{ $$ = IdentifierFactorSemanticAction($1); }
 	;
 
 constant:

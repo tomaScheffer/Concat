@@ -98,7 +98,10 @@ static char* _evaluateFactor(Factor* factor) {
 	switch (factor->type) {
 		case INTERPOLATION_FACTOR:
 			return _evaluateInterpolation(factor->interpolation);
-
+		case CONSTANT_FACTOR:
+			return _duplicateString(factor->constant->string);
+		case EXPRESSION_FACTOR:
+			return _evaluateExpression(factor->expression);
 		case IDENTIFIER_FACTOR: {
 			const char* identifier = factor->identifier;
 			Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
@@ -128,6 +131,7 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
     if (!interpolation || !interpolation->fragments) { 
         return _duplicateString(""); 
     }
+	logDebugging(_logger, "Aca en interpolation, RESULT:");
 
     InterpolationFragmentList* current = interpolation->fragments;
     char* result = _duplicateString("");
@@ -192,7 +196,7 @@ static char* _duplicateString(const char * text) {
 
 void _executeRoutine(Routine* routine) {
     if (!routine) { return; }
-	
+
     _executeStatementList(routine->body);
 }
 //------------------------------------------------------------------------------------------------------

@@ -93,11 +93,7 @@ Token AtomicLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token t
 Token StringLexemeAction(LexicalAnalyzerContext* lexicalAnalyzerContext, Token token) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 
-	unsigned int len = lexicalAnalyzerContext->length;
-	char* unquoted = strdup(lexicalAnalyzerContext->lexeme + 1);
-	int lenght = strlen(lexicalAnalyzerContext->lexeme);
-	unquoted[lenght - 2] = '\0';
-	lexicalAnalyzerContext->semanticValue->string = unquoted;
+	lexicalAnalyzerContext->semanticValue->string = strdup(lexicalAnalyzerContext->lexeme);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 
 	return token;

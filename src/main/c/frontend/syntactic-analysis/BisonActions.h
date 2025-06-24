@@ -39,6 +39,7 @@ Expression* RandomExpressionSemanticAction(Expression* min, Expression* max, Exp
 Expression* ReverseExpressionSemanticAction(Expression* input);
 Expression* ToUpperExpressionSemanticAction(Expression* input);
 Expression* ToLowerExpressionSemanticAction(Expression* input);
+Expression* LengthExpressionSemanticAction(Expression* input);
 Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* target, Expression* replacement);
 
 Factor* ConstantFactorSemanticAction(Constant* constant);

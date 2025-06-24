@@ -251,6 +251,26 @@ Expression* ToLowerExpressionSemanticAction(Expression* input) {
     return expression;
 }
 
+Expression* LengthExpressionSemanticAction(Expression* input) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+ 
+    Expression* expression = malloc(sizeof(Expression));
+
+    if (!expression) { return NULL; }
+
+    expression->type = EXPRESSION_LEN;
+    expression->unary = malloc(sizeof(*(expression->unary)));
+
+    if (!expression->unary) {
+        free(expression);
+        return NULL;
+    }
+
+	expression->unary->input = input;
+
+    return expression;
+}
+
 Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* target, Expression* replacement) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 

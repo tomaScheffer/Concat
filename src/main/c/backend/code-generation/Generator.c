@@ -23,6 +23,7 @@ static char* _evaluateRandom(RandomExpression* random);
 static char* _evaluateReverse(UnaryExpression* unary);
 static char* _evaluateToUpper(UnaryExpression* unary);
 static char* _evaluateToLower(UnaryExpression* unary);
+static char* _evaluateLenght(UnaryExpression* unary);
 static char* _evaluateReplace(ReplaceExpression* replace);
 
 static void _generateProgram(Program* program);
@@ -120,8 +121,11 @@ static char* _evaluateExpression(Expression* expression) {
             return _evaluateToUpper(expression->unary);
         case EXPRESSION_TLO:
             return _evaluateToLower(expression->unary);
+        case EXPRESSION_LEN:
+            return _evaluateLenght(expression->unary);
         case EXPRESSION_RPL:
             return _evaluateReplace(expression->replace);
+
 		default:
 			logError(_logger, "Unsupported expression type.");
 			return _duplicateString("");
@@ -345,6 +349,19 @@ static char* _evaluateToLower(UnaryExpression* unary) {
 	}
 
     return input;
+}
+
+static char* _evaluateLenght(UnaryExpression* unary) {
+    char* input = _evaluateExpression(unary->input);
+
+    if (!input) { return NULL; }
+
+    int lenght = strlen(input);
+    char* result = malloc(16);
+    sprintf(result, "%d", lenght);
+    free(input);
+
+    return result;
 }
 
 static char* _evaluateReplace(ReplaceExpression* replace) {

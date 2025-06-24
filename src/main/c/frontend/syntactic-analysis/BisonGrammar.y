@@ -126,6 +126,7 @@ expression:
 	| REV_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ReverseExpressionSemanticAction($3); }
 	| TUP_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ToUpperExpressionSemanticAction($3); }
 	| TLO_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ToLowerExpressionSemanticAction($3); }
+	| LEN_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = LengthExpressionSemanticAction($3); }
 	| RPL_TOKEN OPEN_PAREN_TOKEN expression COMMA_TOKEN expression COMMA_TOKEN expression CLOSE_PAREN_TOKEN { $$ = ReplaceExpressionSemanticAction($3, $5, $7); }
 	| factor														{ $$ = FactorExpressionSemanticAction($1); }
 	;

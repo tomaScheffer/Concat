@@ -55,7 +55,7 @@ void releaseFactor(Factor* factor) {
 }
 
 void releaseExpression(Expression* expression) {
-	if (!expression) return;
+	if (!expression) { return; }
 
 	switch (expression->type) {
 		case FACTOR_EXPRESSION:
@@ -76,6 +76,7 @@ void releaseExpression(Expression* expression) {
 		case EXPRESSION_REV:
 		case EXPRESSION_TUP:
 		case EXPRESSION_TLO:
+		case EXPRESSION_LEN:
 			releaseExpression(expression->unary->input);
 			break;
 

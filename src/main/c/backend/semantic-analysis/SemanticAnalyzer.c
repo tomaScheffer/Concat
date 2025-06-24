@@ -133,6 +133,7 @@ static boolean _analyzeExpression(Expression* expression) {
 		case EXPRESSION_REV:
 		case EXPRESSION_TUP:
 		case EXPRESSION_TLO:
+		case EXPRESSION_LEN:
 			return _analyzeExpression(expression->unary->input);
 		case EXPRESSION_RPL:
 			return _analyzeExpression(expression->replace->original) &&

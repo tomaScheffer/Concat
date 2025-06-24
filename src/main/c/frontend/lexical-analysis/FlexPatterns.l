@@ -40,10 +40,8 @@
 "TUP"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), TUP_TOKEN); }
 "TLO"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), TLO_TOKEN); }
 "RPL"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), RPL_TOKEN); }
-"NUM"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), NUM_TOKEN); }
 "LEN"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), LEN_TOKEN); }
-"ENC"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), ENC_TOKEN); }
-"DEC"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), DEC_TOKEN); }
+"ECP"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), ECP_TOKEN); }
 "OUT"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), OUT_TOKEN); }
 "FUN"                                   { return KeywordLexemeAction(createLexicalAnalyzerContext(), FUN_TOKEN); }
 

@@ -284,6 +284,27 @@ Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* ta
     return expression;
 }
 
+Expression* EncryptionExpressionSemanticAction(Expression* input, Expression* key) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+
+    Expression* expression = malloc(sizeof(Expression));
+    if (!expression) { return NULL; }
+
+    BinaryExpression* binary = malloc(sizeof(BinaryExpression));
+    if (!binary) {
+        free(expression);
+        return NULL;
+    }
+
+    binary->input = input;
+    binary->key = key;
+
+    expression->type = EXPRESSION_ECP;
+    expression->binary = binary;
+
+    return expression;
+}
+
 // ---------------------------------------------------------------------------------------
 
 Factor* ConstantFactorSemanticAction(Constant* constant) {

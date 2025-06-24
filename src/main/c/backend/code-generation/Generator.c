@@ -25,6 +25,7 @@ static char* _evaluateToUpper(UnaryExpression* unary);
 static char* _evaluateToLower(UnaryExpression* unary);
 static char* _evaluateLenght(UnaryExpression* unary);
 static char* _evaluateReplace(ReplaceExpression* replace);
+static char* _evaluateSimpleEncription(BinaryExpression* binary);
 
 static void _generateProgram(Program* program);
 static void _generatePrologue(void);
@@ -135,7 +136,8 @@ static char* _evaluateExpression(Expression* expression) {
             return _evaluateLenght(expression->unary);
         case EXPRESSION_RPL:
             return _evaluateReplace(expression->replace);
-
+        case EXPRESSION_ECP:
+            return _evaluateSimpleEncription(expression->binary);
 		default:
 			logError(_logger, "Unsupported expression type.");
 			return _duplicateString("");
@@ -458,13 +460,52 @@ static char* _evaluateReplace(ReplaceExpression* replace) {
     return result;
 }
 
+static char* _evaluateSimpleEncription(BinaryExpression* binary) {
+    char* input = _evaluateExpression(binary->input);
+    char* key = _evaluateExpression(binary->key);
+
+    if (!input || !key) {
+        free(input);
+        free(key);
+        return _duplicateString("");
+    }
+
+    size_t len = strlen(input);
+    size_t keyLenght = strlen(key);
+    size_t minLenght = len < keyLenght ? len : keyLenght;
+
+    unsigned char* xorResult = malloc(minLenght);
+
+    if (!xorResult) {
+        free(input);
+        free(key);
+        return _duplicateString("");
+    }
+
+    for (size_t i = 0; i < minLenght; ++i) {
+        xorResult[i] = input[i] ^ key[i % keyLenght];
+    }
+
+    size_t encodedLenght = 0;
+    char* encoded = base64_encode(xorResult, minLenght, &encodedLenght);
+
+    free(xorResult);
+    free(input);
+    free(key);
+
+    if (!encoded) { return _duplicateString(""); }
+
+    return encoded;
+}
+
+
 //------------------------------------------------------------------------------------------------------
 
 /**
 Generates the output of the program.
  */
 static void _generateProgram(Program* program) {
-	_executeStatementList(program->statements);
+    _executeStatementList(program->statements);
 }
 
 /**
@@ -474,7 +515,7 @@ static void _generateProgram(Program* program) {
  * @see https://ctan.dcc.uchile.cl/graphics/pgf/contrib/forest/forest-doc.pdf
  */
 static void _generatePrologue(void) {
-	_output(0, "%s", "");
+    _output(0, "%s", "");
 }
 
 /**
@@ -482,14 +523,14 @@ static void _generatePrologue(void) {
  * completes a valid Latex document.
  */
 static void _generateEpilogue(const int value) {
-	_output(0, "%s%d%s", "");
+    _output(0, "%s%d%s", "");
 }
 
 /**
  * Generates an indentation string for the specified level.
  */
 static char* _indentation(const unsigned int level) {
-	return indentation(_indentationCharacter, level, _indentationSize);
+    return indentation(_indentationCharacter, level, _indentationSize);
 }
 
 /**
@@ -498,15 +539,15 @@ static char* _indentation(const unsigned int level) {
  * buffering.
  */
 static void _output(const unsigned int indentationLevel, const char* const format, ...) {
-	va_list arguments;
-	va_start(arguments, format);
-	char* indentation = _indentation(indentationLevel);
-	char* effectiveFormat = concatenate(2, indentation, format);
-	vfprintf(stdout, effectiveFormat, arguments);
-	fflush(stdout);
-	free(effectiveFormat);
-	free(indentation);
-	va_end(arguments);
+    va_list arguments;
+    va_start(arguments, format);
+    char* indentation = _indentation(indentationLevel);
+    char* effectiveFormat = concatenate(2, indentation, format);
+    vfprintf(stdout, effectiveFormat, arguments);
+    fflush(stdout);
+    free(effectiveFormat);
+    free(indentation);
+    va_end(arguments);
 }
 
 //------------------------------------------------------------------------------------------------------
@@ -514,15 +555,15 @@ static void _output(const unsigned int indentationLevel, const char* const forma
 /** PUBLIC FUNCTIONS */
 
 void generate(CompilerState* compilerState, SymbolTable* symbolTable) {
-	_initializeGeneratorModule(symbolTable);
-	
-	logDebugging(_logger, "Generating final output...");
-	
-	_generatePrologue();
-	_generateProgram(compilerState->abstractSyntaxtTree);
-	_generateEpilogue(compilerState->value);
-	
-	logDebugging(_logger, "Generation is done.");
+    _initializeGeneratorModule(symbolTable);
 
-	_shutdownGeneratorModule();
+    logDebugging(_logger, "Generating final output...");
+
+    _generatePrologue();
+    _generateProgram(compilerState->abstractSyntaxtTree);
+    _generateEpilogue(compilerState->value);
+
+    logDebugging(_logger, "Generation is done.");
+
+    _shutdownGeneratorModule();
 }

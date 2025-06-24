@@ -38,6 +38,7 @@ typedef struct Program Program;
 
 typedef struct ArithmeticExpression ArithmeticExpression;
 typedef struct UnaryExpression UnaryExpression;
+typedef struct BinaryExpression BinaryExpression;
 typedef struct RandomExpression RandomExpression;
 typedef struct ReplaceExpression ReplaceExpression;
 
@@ -53,7 +54,8 @@ enum ExpressionType {
 	EXPRESSION_TUP,
 	EXPRESSION_TLO,
 	EXPRESSION_LEN,
-	EXPRESSION_RPL
+	EXPRESSION_RPL,
+	EXPRESSION_ECP
 };
 
 enum ArithmeticOperator {
@@ -118,6 +120,11 @@ struct UnaryExpression {
 	Expression* input;
 };
 
+struct BinaryExpression {
+    Expression* input;
+    Expression* key;
+};
+
 struct RandomExpression {
 	Expression* min;
 	Expression* max;
@@ -137,6 +144,7 @@ struct Expression {
 		Factor* factor;
 		ArithmeticExpression* arithmetic;
 		UnaryExpression* unary;
+		BinaryExpression* binary;
 		RandomExpression* random;
 		ReplaceExpression* replace;
 	};

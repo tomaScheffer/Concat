@@ -142,6 +142,10 @@ static boolean _analyzeExpression(Expression* expression) {
 			return _analyzeExpression(expression->replace->original) &&
 			       _analyzeExpression(expression->replace->target) &&
 			       _analyzeExpression(expression->replace->replacement);
+		case EXPRESSION_ECP:
+			return _analyzeExpression(expression->binary->input) &&
+				   _analyzeExpression(expression->binary->key);
+
 		default:
 			logError(_logger, "Unknown expression type.");
 			return false;

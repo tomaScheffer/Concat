@@ -57,7 +57,7 @@
 /** Terminals. */
 
 %token <token> STRING_TYPE_TOKEN ATOMIC_TYPE_TOKEN BUFFER_TYPE_TOKEN
-%token <token> RND_TOKEN REV_TOKEN TUP_TOKEN TLO_TOKEN RPL_TOKEN NUM_TOKEN LEN_TOKEN ENC_TOKEN DEC_TOKEN
+%token <token> RND_TOKEN REV_TOKEN TUP_TOKEN TLO_TOKEN RPL_TOKEN LEN_TOKEN ECP_TOKEN
 %token <token> FUN_TOKEN OUT_TOKEN
 %token <token> STRING_START_TOKEN STRING_END_TOKEN
 
@@ -128,6 +128,7 @@ expression:
 	| TLO_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = ToLowerExpressionSemanticAction($3); }
 	| LEN_TOKEN OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN		{ $$ = LengthExpressionSemanticAction($3); }
 	| RPL_TOKEN OPEN_PAREN_TOKEN expression COMMA_TOKEN expression COMMA_TOKEN expression CLOSE_PAREN_TOKEN { $$ = ReplaceExpressionSemanticAction($3, $5, $7); }
+	| ECP_TOKEN OPEN_PAREN_TOKEN expression COMMA_TOKEN expression CLOSE_PAREN_TOKEN						{ $$ = EncryptionExpressionSemanticAction($3, $5); }
 	| factor														{ $$ = FactorExpressionSemanticAction($1); }
 	;
 

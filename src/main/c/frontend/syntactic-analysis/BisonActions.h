@@ -41,6 +41,7 @@ Expression* ToUpperExpressionSemanticAction(Expression* input);
 Expression* ToLowerExpressionSemanticAction(Expression* input);
 Expression* LengthExpressionSemanticAction(Expression* input);
 Expression* ReplaceExpressionSemanticAction(Expression* original, Expression* target, Expression* replacement);
+Expression* EncryptionExpressionSemanticAction(Expression* input, Expression* key);
 
 Factor* ConstantFactorSemanticAction(Constant* constant);
 Factor* ExpressionFactorSemanticAction(Expression* expression);

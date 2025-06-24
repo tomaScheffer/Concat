@@ -249,7 +249,6 @@ static char* _evaluateInterpolation(Interpolation* interpolation) {
             logError(_logger, "Out of memory during interpolation evaluation");
             free(result);
             free(value);
-
             return NULL;
         }
         strcpy(newResult, value);
@@ -523,7 +522,7 @@ static void _generatePrologue(void) {
  * completes a valid Latex document.
  */
 static void _generateEpilogue(const int value) {
-    _output(0, "%s%d%s", "");
+    _output(0, "%s", "");
 }
 
 /**

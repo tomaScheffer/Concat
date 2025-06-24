@@ -143,7 +143,7 @@ struct InterpolationFragment {
 
 struct InterpolationFragmentList {
     InterpolationFragment* head;
-    InterpolationFragment* tail;
+    InterpolationFragmentList* next;
 };
 
 struct Interpolation {

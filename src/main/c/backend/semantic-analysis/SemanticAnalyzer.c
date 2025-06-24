@@ -110,7 +110,7 @@ static boolean _analyzeRoutine(Routine* routine) {
 
 	Symbol symbol = {
 		.kind = ROUTINE_SYMBOL,
-		.routine.routine = routine
+		.routine = routine
 	};
 
 	if (!defineSymbol(_symbolTable, routine->identifier, &symbol)) {
@@ -209,15 +209,17 @@ static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment) {
 //--------------------------------------------------------------------------
 
 boolean performSemanticAnalysis(Program* program) {
+    initializeSemanticAnalyzerModule();
     _logSemanticAnalizer(__FUNCTION__);
+    boolean status = false;
 
     if (program == NULL || program->statements == NULL) {
         logError(_logger, "Invalid program.");
-        return false;
     }
-
-    initializeSemanticAnalyzerModule();
-    boolean status = _analyzeStatementList(program->statements);
+    else {
+        status = _analyzeStatementList(program->statements);
+    }
+    
     shutdownSemanticAnalyzerModule();
 
     return status;

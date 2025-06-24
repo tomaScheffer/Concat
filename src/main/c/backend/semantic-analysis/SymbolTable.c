@@ -25,6 +25,8 @@ static void _logSymbolTable(const char* functionName) {
 //--------------------------------------------------------------------------------
 
 SymbolTable* createSymbolTable() {
+    if (!_logger) { _logger = createLogger("SymbolTable"); }
+
     _logSymbolTable(__FUNCTION__);
 
     SymbolTable* table = malloc(sizeof(SymbolTable));
@@ -42,13 +44,25 @@ SymbolTable* createSymbolTable() {
     return table;
 }
 
+void destroySymbol(Symbol* symbol) {
+	if (!symbol || !symbol->name) { return; }
+
+	free(symbol->name);
+
+	if (symbol->kind == VARIABLE_SYMBOL && symbol->variable.value) {
+		free(symbol->variable.value);
+	}
+
+	symbol->name = NULL;
+}
+
 void destroySymbolTable(SymbolTable* table) {
     _logSymbolTable(__FUNCTION__);
 
     if (!table) { return; }
 
     for (int i = 0; i < table->size; i++) {
-        free((char *)table->entries[i].name);
+        destroySymbol(&table->entries[i]);
     }
 
     free(table->entries);
@@ -78,7 +92,7 @@ boolean defineSymbol(SymbolTable* table, char* name, Symbol symbol) {
 boolean isSymbolDefined(SymbolTable* table, char* name) {
     _logSymbolTable(__FUNCTION__);
 
-    for (int i = 0; i < table->size; ++i) {
+    for (int i = 0; i < table->size; i++) {
         if (strcmp(table->entries[i].name, name) == 0) {
             return true;
         }
@@ -90,11 +104,25 @@ boolean isSymbolDefined(SymbolTable* table, char* name) {
 Symbol* getSymbol(SymbolTable* table, char* name) {
     _logSymbolTable(__FUNCTION__);
     
-    for (int i = 0; i < table->size; ++i) {
+    if (!table || !name) { return NULL; }
+
+    for (int i = 0; i < table->size; i++) {
         if (strcmp(table->entries[i].name, name) == 0) {
             return &table->entries[i];
         }
     }
 
     return NULL;
+}
+
+boolean setSymbolValue(SymbolTable* table, char* name, VariableData value) {
+    _logSymbolTable(__FUNCTION__);
+
+	Symbol* symbol = getSymbol(table, name);
+	
+    if (!symbol || symbol->kind != VARIABLE_SYMBOL) { return false; }
+
+	symbol->variable = value;
+    
+	return true;
 }

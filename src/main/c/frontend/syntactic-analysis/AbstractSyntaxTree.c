@@ -17,24 +17,6 @@ void shutdownAbstractSyntaxTreeModule() {
 
 // ----------------------------------------------------------------------------------------------
 
-static InterpolationFragment* createInterpolationFragmentLiteral(const char* text) {
-	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
-	fragment->type = LITERAL_FRAGMENT;
-	fragment->literal = strdup(text);
-	fragment->next = NULL;
-	
-	return fragment;
-}
-
-static InterpolationFragment* createInterpolationFragmentExpression(const char* identifier) {
-	InterpolationFragment* fragment = malloc(sizeof(InterpolationFragment));
-	fragment->type = EXPRESSION_FRAGMENT;
-	fragment->identifier = strdup(identifier);
-	fragment->next = NULL;
-
-	return fragment;
-}
-
 Interpolation* createInterpolation() {
     Interpolation* interpolation = malloc(sizeof(Interpolation));
 
@@ -48,20 +30,9 @@ Interpolation* createInterpolation() {
     }
 
     interpolation->fragments->head = NULL;
-    interpolation->fragments->tail = NULL;
+    interpolation->fragments->next = NULL;
 
     return interpolation;
-}
-
-void addInterpolationFragment(InterpolationFragmentList* list, InterpolationFragment* fragment) {
-    if (!list->head) {
-        list->head = fragment;
-        list->tail = fragment;
-    } else {
-        list->tail->next = fragment;
-        list->tail = fragment;
-    }
-    fragment->next = NULL;
 }
 
 // ----------------------------------------------------------------------------------------------

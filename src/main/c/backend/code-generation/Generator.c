@@ -4,7 +4,8 @@
 
 const char _indentationCharacter = ' ';
 const char _indentationSize = 4;
-static Logger * _logger = NULL;
+static Logger* _logger = NULL;
+static SymbolTable* _symbolTable = NULL;
 
 void initializeGeneratorModule() {
 	_logger = createLogger("Generator");
@@ -16,108 +17,165 @@ void shutdownGeneratorModule() {
 	}
 }
 
+//------------------------------------------------------------------------------------------------------
 /** PRIVATE FUNCTIONS */
 
-static const char _expressionTypeToCharacter(const ExpressionType type);
-static void _generateConstant(const unsigned int indentationLevel, Constant * constant);
-static void _generateEpilogue(const int value);
-static void _generateExpression(const unsigned int indentationLevel, Expression * expression);
-static void _generateFactor(const unsigned int indentationLevel, Factor * factor);
-static void _generateProgram(Program * program);
+static boolean _executeStatementList(StatementList* list);
+static boolean _executeStatement(Statement* statement);
+static char* _evaluateExpression(Expression* expression);
+static char* _evaluateFactor(Factor* factor);
+static char* _evaluateInterpolation(Interpolation* interpolation);
+static char* _duplicateString(const char* text);
+
+static void _generateProgram(Program* program);
 static void _generatePrologue(void);
-static char * _indentation(const unsigned int indentationLevel);
-static void _output(const unsigned int indentationLevel, const char * const format, ...);
+static void _generateEpilogue(const int value);
+static char* _indentation(const unsigned int indentationLevel);
+static void _output(const unsigned int indentationLevel, const char* const format, ...);
 
-/**
- * Converts and expression type to the proper character of the operation
- * involved, or returns '\0' if that's not possible.
- */
-static const char _expressionTypeToCharacter(const ExpressionType type) {/*
-	switch (type) {
-		case ADDITION: return '+';
-		case DIVISION: return '/';
-		case MULTIPLICATION: return '*';
-		case SUBTRACTION: return '-';
+//------------------------------------------------------------------------------------------------------
+
+static boolean _executeStatementList(StatementList* list) {
+	if (!list) { return true; }
+
+	return _executeStatementList(list->next) && _executeStatement(list->statement);
+}
+
+static boolean _executeStatement(Statement* statement) {
+	if (!statement) { return false; }
+
+	switch (statement->type) {
+		case STATEMENT_DECLARATION: {
+			Symbol symbol = {
+				.kind = VARIABLE_SYMBOL,
+				.variable.type = statement->declaration->type
+			};
+
+			defineSymbol(_symbolTable, statement->declaration->identifier, &symbol);
+
+			if (statement->declaration->type == STRING_TYPE) {
+				char* value = _evaluateExpression(statement->declaration->expression);
+				VariableData data;
+				data.type = STRING_TYPE;
+				data.value = _duplicateString(value);
+
+				setSymbolValue(_symbolTable, statement->declaration->identifier, data);
+				free(value);
+			}
+			return true;
+		}
+		case STATEMENT_OUTPUT: {
+			char* result = _evaluateExpression(statement->expression);
+
+			_output(0, "%s\n", result);
+			free(result);
+
+			return true;
+		}
 		default:
-			logError(_logger, "The specified expression type cannot be converted into character: %d", type);
-			return '\0';
-	}*/
-return '\0';
+			logWarning(_logger, "Unsupported statement type for execution.");
+			return true;
+	}
 }
 
-/**
- * Generates the output of a constant.
- */
-static void _generateConstant(const unsigned int indentationLevel, Constant * constant) {
-	_output(indentationLevel, "%s", "[ $C$, circle, draw, black!20\n");
-	//_output(1 + indentationLevel, "%s%d%s", "[ $", constant->value, "$, circle, draw ]\n");
-	_output(indentationLevel, "%s", "]\n");
-}
+static char* _evaluateExpression(Expression* expression) {
+	if (!expression) { return _duplicateString(""); }
 
-/**
- * Creates the epilogue of the generated output, that is, the final lines that
- * completes a valid Latex document.
- */
-static void _generateEpilogue(const int value) {
-	_output(0, "%s%d%s",
-		"            [ $", value, "$, circle, draw, blue ]\n"
-		"        ]\n"
-		"    \\end{forest}\n"
-		"\\end{document}\n\n"
-	);
-}
-
-/**
- * Generates the output of an expression.
- */
-static void _generateExpression(const unsigned int indentationLevel, Expression * expression) {
-	_output(indentationLevel, "%s", "[ $E$, circle, draw, black!20\n");
-	
-	/*switch (expression->type) {
-		case ADDITION:
-		case DIVISION:
-		case MULTIPLICATION:
-		case SUBTRACTION:
-			_generateExpression(1 + indentationLevel, expression->leftExpression);
-			_output(1 + indentationLevel, "%s%c%s", "[ $", _expressionTypeToCharacter(expression->type), "$, circle, draw, purple ]\n");
-			_generateExpression(1 + indentationLevel, expression->rightExpression);
-			break;
-		case FACTOR:
-			_generateFactor(1 + indentationLevel, expression->factor);
-			break;
+	switch (expression->type) {
+		case FACTOR_EXPRESSION:
+			return _evaluateFactor(expression->factor);
+		case ARITHMETIC_EXPRESSION: // TODO
 		default:
-			logError(_logger, "The specified expression type is unknown: %d", expression->type);
-			break;
-	}*/
-	_output(indentationLevel, "%s", "]\n");
+			logError(_logger, "Unsupported expression type.");
+			return _duplicateString("");
+	}
 }
 
-/**
- * Generates the output of a factor.
- */
-static void _generateFactor(const unsigned int indentationLevel, Factor * factor) {/*
-	_output(indentationLevel, "%s", "[ $F$, circle, draw, black!20\n");
+static char* _evaluateFactor(Factor* factor) {
+	if (!factor) { return _duplicateString(""); }
+
 	switch (factor->type) {
-		case CONSTANT:
-			_generateConstant(1 + indentationLevel, factor->constant);
-			break;
-		case EXPRESSION:
-			_output(1 + indentationLevel, "%s", "[ $($, circle, draw, purple ]\n");
-			_generateExpression(1 + indentationLevel, factor->expression);
-			_output(1 + indentationLevel, "%s", "[ $)$, circle, draw, purple ]\n");
-			break;
+		case INTERPOLATION_FACTOR:
+			return _evaluateInterpolation(factor->interpolation);
 		default:
-			logError(_logger, "The specified factor type is unknown: %d", factor->type);
-			break;
-	}*/
-	_output(indentationLevel, "%s", "]\n");
+			logError(_logger, "Unsupported factor type.");
+			return _duplicateString("");
+	}
 }
 
+static char* _evaluateInterpolation(Interpolation* interpolation) {
+    if (!interpolation || !interpolation->fragments) { 
+        return _duplicateString(""); 
+    }
+
+    InterpolationFragmentList* current = interpolation->fragments;
+    char* result = _duplicateString("");
+
+    while (current) { // Appendear
+        InterpolationFragment* fragment = current->head;
+        char* value = NULL;
+
+        if (fragment->type == LITERAL_FRAGMENT) {
+            value = _duplicateString(fragment->literal);
+
+        } else if (fragment->type == EXPRESSION_FRAGMENT) {
+
+            const char* identifier = fragment->identifier;
+            Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+
+            if (!symbol || symbol->kind != VARIABLE_SYMBOL) {
+                logError(_logger, "Undefined or non-variable identifier in interpolation: '%s'", identifier);
+                value = _duplicateString("");
+            } else {
+                if (symbol->variable.value) {
+                    value = _duplicateString(symbol->variable.value);
+                } else {
+                    value = _duplicateString("");
+                }
+            }
+
+        } else {
+            logError(_logger, "Unknown interpolation fragment.");
+            value = _duplicateString("");
+        }
+
+        char* newResult = malloc(strlen(result) + strlen(value) + 1);
+
+        if (!newResult) {
+            logError(_logger, "Out of memory during interpolation evaluation");
+            free(result);
+            free(value);
+            return NULL;
+        }
+        strcpy(newResult, result);
+        strcat(newResult, value);
+
+        free(result);
+        free(value);
+
+        result = newResult;
+        current = current->next;
+    }
+
+    return result;
+}
+
+static char* _duplicateString(const char * text) {
+	if (!text) { return NULL; }
+
+	char* copy = malloc(strlen(text) + 1);
+	strcpy(copy, text);
+
+	return copy;
+}
+
+//------------------------------------------------------------------------------------------------------
+
 /**
- * Generates the output of the program.
+Generates the output of the program.
  */
-static void _generateProgram(Program * program) {
-	// _generateExpression(3, program->expression);
+static void _generateProgram(Program* program) {
+	_executeStatementList(program->statements);
 }
 
 /**
@@ -127,24 +185,21 @@ static void _generateProgram(Program * program) {
  * @see https://ctan.dcc.uchile.cl/graphics/pgf/contrib/forest/forest-doc.pdf
  */
 static void _generatePrologue(void) {
-	_output(0, "%s",
-		"\\documentclass{standalone}\n\n"
-		"\\usepackage[utf8]{inputenc}\n"
-		"\\usepackage[T1]{fontenc}\n"
-		"\\usepackage{amsmath}\n"
-		"\\usepackage{forest}\n"
-		"\\usepackage{microtype}\n\n"
-		"\\begin{document}\n"
-		"    \\centering\n"
-		"    \\begin{forest}\n"
-		"        [ \\text{$=$}, circle, draw, purple\n"
-	);
+	_output(0, "%s", "");
+}
+
+/**
+ * Creates the epilogue of the generated output, that is, the final lines that
+ * completes a valid Latex document.
+ */
+static void _generateEpilogue(const int value) {
+	_output(0, "%s%d%s", "");
 }
 
 /**
  * Generates an indentation string for the specified level.
  */
-static char * _indentation(const unsigned int level) {
+static char* _indentation(const unsigned int level) {
 	return indentation(_indentationCharacter, level, _indentationSize);
 }
 
@@ -153,11 +208,11 @@ static char * _indentation(const unsigned int level) {
  * allows to see the output even close to a failure, because it drops the
  * buffering.
  */
-static void _output(const unsigned int indentationLevel, const char * const format, ...) {
+static void _output(const unsigned int indentationLevel, const char* const format, ...) {
 	va_list arguments;
 	va_start(arguments, format);
-	char * indentation = _indentation(indentationLevel);
-	char * effectiveFormat = concatenate(2, indentation, format);
+	char* indentation = _indentation(indentationLevel);
+	char* effectiveFormat = concatenate(2, indentation, format);
 	vfprintf(stdout, effectiveFormat, arguments);
 	fflush(stdout);
 	free(effectiveFormat);
@@ -165,9 +220,11 @@ static void _output(const unsigned int indentationLevel, const char * const form
 	va_end(arguments);
 }
 
+//------------------------------------------------------------------------------------------------------
+
 /** PUBLIC FUNCTIONS */
 
-void generate(CompilerState * compilerState) {
+void generate(CompilerState* compilerState) {
 	logDebugging(_logger, "Generating final output...");
 	_generatePrologue();
 	_generateProgram(compilerState->abstractSyntaxtTree);

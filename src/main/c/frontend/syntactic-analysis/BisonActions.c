@@ -394,20 +394,14 @@ Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list) {
     return interpolation;
 }
 
-InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* list, InterpolationFragment* fragment) {
+InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* next, InterpolationFragment* fragment) {
     _logSyntacticAnalyzerAction(__FUNCTION__);
 
-    if (!list) {
-        list = malloc(sizeof(InterpolationFragmentList));
+    InterpolationFragmentList* list = malloc(sizeof(InterpolationFragmentList));
+    if (!list) { return NULL; }
 
-        if (!list) { return NULL; }
-
-        list->head = fragment;
-        list->tail = fragment;
-    } else {
-        list->tail->next = fragment;
-        list->tail = fragment;
-    }
+    list->head = fragment;
+    list->next = next;
 
     return list;
 }

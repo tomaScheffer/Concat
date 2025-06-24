@@ -48,7 +48,7 @@ const int main(const int count, const char ** arguments) {
 		if (performSemanticAnalysis(program)) {
 			logDebugging(logger, "Semantic analysis succeeded. Starting code generation...");
 
-			//generate(&compilerState);
+			generate(&compilerState);
 		}
 		else {
 			logError(logger, "Semantic analysis failed.");

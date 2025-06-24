@@ -41,11 +41,19 @@
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Destructor-Decl.html
  */
-/*
+/*	Need syntax tree for nexts steps
 %destructor { releaseConstant($$); } <constant>
 %destructor { releaseExpression($$); } <expression>
 %destructor { releaseFactor($$); } <factor>
 %destructor { releaseProgram($$); } <program>
+%destructor { releaseRoutine($$); } <routine>
+%destructor { releaseDeclaration($$); } <declaration>
+%destructor { releaseStatement($$); } <statement>
+%destructor { releaseStatementList($$); } <statementList>
+%destructor { releaseStringOperation($$); } <stringOperation>
+%destructor { releaseInterpolation($$); } <interpolation>
+%destructor { releaseInterpolationFragment($$); } <interpolation_fragment>
+%destructor { releaseInterpolationFragmentList($$); } <interpolation_fragment_list>
 */
 
 /** Terminals. */

@@ -19,7 +19,7 @@ void shutdownBisonActionsModule();
  */
 
 Program* ProgramSemanticAction(CompilerState *compilerState, StatementList* statements);
-StatementList* StatementListSemanticAction(StatementList* list, Statement* statement);
+StatementList* StatementListSemanticAction(StatementList* next, Statement* statement);
 
 Statement* RoutineStatementSemanticAction(Routine* routine);
 Statement* RoutineCallSemanticAction(char* identifier);
@@ -50,7 +50,7 @@ StringOperation* ToLowerStringOperationSemanticAction(Interpolation* interpolati
 StringOperation* ReplaceStringOperationSemanticAction(Interpolation* original, Interpolation* target, Interpolation* replacement);
 
 Interpolation* InterpolationSemanticAction(InterpolationFragmentList* list);
-InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* list, InterpolationFragment* fragment);
+InterpolationFragmentList* InterpolationFragmentListSemanticAction(InterpolationFragmentList* next, InterpolationFragment* fragment);
 
 InterpolationFragment* LiteralFragmentSemanticAction(char* text);
 InterpolationFragment* ExpressionFragmentSemanticAction(char* identifier);

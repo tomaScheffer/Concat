@@ -5,7 +5,9 @@
 #include "../../shared/CompilerState.h"
 #include "../../shared/Logger.h"
 #include "../../shared/String.h"
+#include "../semantic-analysis/SymbolTable.h"
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 /** Initialize module's internal state. */

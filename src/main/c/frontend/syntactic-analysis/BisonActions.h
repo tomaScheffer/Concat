@@ -22,7 +22,7 @@ Program* ProgramSemanticAction(CompilerState *compilerState, StatementList* stat
 StatementList* StatementListSemanticAction(StatementList* next, Statement* statement);
 
 Statement* RoutineStatementSemanticAction(Routine* routine);
-Statement* RoutineCallSemanticAction(char* identifier);
+// Statement* RoutineCallSemanticAction(char* identifier);
 Statement* StringOperationStatementSemanticAction(StringOperation* operation);
 Statement* OutStatementSemanticAction(Expression* expression);
 Statement* DeclarationStatementSemanticAction(Declaration* declaration);
@@ -39,6 +39,7 @@ Expression* ArithmeticExpressionSemanticAction(Expression* left, Expression* rig
 Factor* ConstantFactorSemanticAction(Constant* constant);
 Factor* ExpressionFactorSemanticAction(Expression* expression);
 Factor* InterpolationFactorSemanticAction(Interpolation* interpolation);
+Factor* IdentifierFactorSemanticAction(char* identifier);
 
 Constant* AtomicConstantSemanticAction(int value);
 Constant* StringConstantSemanticAction(char* value);

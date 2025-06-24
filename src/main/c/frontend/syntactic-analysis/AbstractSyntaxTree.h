@@ -70,7 +70,8 @@ enum ConstantType {
 enum FactorType {
 	CONSTANT_FACTOR,
 	EXPRESSION_FACTOR,
-	INTERPOLATION_FACTOR
+	INTERPOLATION_FACTOR,
+	IDENTIFIER_FACTOR
 };
 
 enum StatementType {
@@ -128,6 +129,7 @@ struct Factor {
 		Constant* constant;
 		Expression* expression;
 		Interpolation* interpolation;
+		char* identifier;
 	};
 };
 

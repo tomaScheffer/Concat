@@ -26,6 +26,7 @@ static char* _evaluateExpression(Expression* expression);
 static char* _evaluateFactor(Factor* factor);
 static char* _evaluateInterpolation(Interpolation* interpolation);
 static char* _duplicateString(const char* text);
+static void _executeRoutine(Routine* routine);
 
 static void _generateProgram(Program* program);
 static void _generatePrologue(void);
@@ -97,6 +98,26 @@ static char* _evaluateFactor(Factor* factor) {
 	switch (factor->type) {
 		case INTERPOLATION_FACTOR:
 			return _evaluateInterpolation(factor->interpolation);
+
+		case IDENTIFIER_FACTOR: {
+			const char* identifier = factor->identifier;
+			Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+
+			if (!symbol) {
+				logError(_logger, "Undefined identifier: '%s'", identifier);
+				return _duplicateString("");
+			}
+
+			if (symbol->kind == VARIABLE_SYMBOL) {
+				return _duplicateString(symbol->variable.value ? symbol->variable.value : "");
+			} else if (symbol->kind == ROUTINE_SYMBOL) {
+				_executeRoutine(symbol->routine);
+				return _duplicateString("");
+			} else {
+				logError(_logger, "Identifier '%s' is not a valid variable or routine.", identifier);
+				return _duplicateString("");
+			}
+		}
 		default:
 			logError(_logger, "Unsupported factor type.");
 			return _duplicateString("");
@@ -169,6 +190,11 @@ static char* _duplicateString(const char * text) {
 	return copy;
 }
 
+void _executeRoutine(Routine* routine) {
+    if (!routine) { return; }
+	
+    _executeStatementList(routine->body);
+}
 //------------------------------------------------------------------------------------------------------
 
 /**

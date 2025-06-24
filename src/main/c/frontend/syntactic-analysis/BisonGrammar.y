@@ -85,7 +85,6 @@
 
 %type <routine> routine
 %type <statement> statement
-%type <statement> routine_call
 %type <declaration> declaration
 %type <statementList> statement_list
 %type <stringOperation> string_operation
@@ -118,7 +117,6 @@ statement:
 	declaration														{ $$ = DeclarationStatementSemanticAction($1); }
 	| expression													{ $$ = ExpressionStatementSemanticAction($1); }
 	| routine														{ $$ = RoutineStatementSemanticAction($1); }
-	| routine_call													{ $$ = $1; }
 	| string_operation												{ $$ = StringOperationStatementSemanticAction($1); }
 	| OUT_TOKEN expression											{ $$ = OutStatementSemanticAction($2); }
 
@@ -134,6 +132,7 @@ factor:
 	  OPEN_PAREN_TOKEN expression CLOSE_PAREN_TOKEN					{ $$ = ExpressionFactorSemanticAction($2); }
 	| constant														{ $$ = ConstantFactorSemanticAction($1); }
 	| interpolation													{ $$ = InterpolationFactorSemanticAction($1); }
+	| IDENTIFIER_TOKEN												{ $$ = IdentifierFactorSemanticAction($1); }
 	;
 
 constant:
@@ -144,10 +143,6 @@ constant:
 
 routine:
 	FUN_TOKEN IDENTIFIER_TOKEN OPEN_BRACE_TOKEN statement_list CLOSE_BRACE_TOKEN		{ $$ = RoutineSemanticAction($2, $4); }
-	;
-
-routine_call:
-	IDENTIFIER_TOKEN													{ $$ = RoutineCallSemanticAction($1); }
 	;
 
 declaration:

@@ -74,6 +74,7 @@ Statement* RoutineStatementSemanticAction(Routine* routine) {
     return statement;
 }
 
+/*
 Statement* RoutineCallSemanticAction(char* identifier) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 
@@ -85,7 +86,7 @@ Statement* RoutineCallSemanticAction(char* identifier) {
     statement->routineCallName = identifier;
 
     return statement;
-}
+}*/
 
 Statement* StringOperationStatementSemanticAction(StringOperation* operation) {
     _logSyntacticAnalyzerAction(__FUNCTION__);
@@ -219,6 +220,18 @@ Factor* InterpolationFactorSemanticAction(Interpolation* interpolation) {
     factor->interpolation = interpolation;
 
     return factor;
+}
+
+Factor* IdentifierFactorSemanticAction(char* identifier) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+
+	Factor* factor = malloc(sizeof(Factor));
+	if (!factor) { return NULL; }
+
+	factor->type = IDENTIFIER_FACTOR;
+	factor->identifier = identifier;
+
+	return factor;
 }
 
 // ---------------------------------------------------------------------------------------

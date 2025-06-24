@@ -13,6 +13,7 @@ static boolean _analyzeFactor(Factor* factor);
 static boolean _analyzeRoutine(Routine* routine);
 static boolean _analyzeInterpolation(Interpolation* interpolation);
 static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment);
+static boolean _analyzeIdentifierFactor(Factor* factor);
 
 //--------------------------------------------------------------------------
 
@@ -150,6 +151,8 @@ static boolean _analyzeFactor(Factor* factor) {
 			return _analyzeExpression(factor->expression);
 		case INTERPOLATION_FACTOR:
 			return _analyzeInterpolation(factor->interpolation);
+        case IDENTIFIER_FACTOR:
+            return _analyzeIdentifierFactor(factor);
 		default:
 			logError(_logger, "Unknown factor type.");
 			return false;
@@ -204,6 +207,26 @@ static boolean _analyzeInterpolationFragment(InterpolationFragment* fragment) {
 			logError(_logger, "Unknown interpolation fragment type.");
 			return false;
 	}
+}
+
+static boolean _analyzeIdentifierFactor(Factor* factor) {
+    if (!factor || !factor->identifier) { return false; }
+
+    const char* identifier = factor->identifier;
+
+    if (!isSymbolDefined(_symbolTable, (char*) identifier)) {
+        logError(_logger, "Undefined identifier: '%s'", identifier);
+        return false;
+    }
+
+    Symbol* symbol = getSymbol(_symbolTable, (char*) identifier);
+
+    if (symbol->kind != VARIABLE_SYMBOL && symbol->kind != ROUTINE_SYMBOL) {
+        logError(_logger, "Identifier '%s' must be a variable or routine.", identifier);
+        return false;
+    }
+
+    return true;
 }
 
 //--------------------------------------------------------------------------

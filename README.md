@@ -1,71 +1,44 @@
-# Concat proyect!
+[![✗](https://img.shields.io/badge/Release-v1.1.0-ffb600.svg?style=for-the-badge)](https://github.com/agustin-golmar/Flex-Bison-Compiler/releases)
 
-Ejemplos:
+[![✗](https://github.com/agustin-golmar/Flex-Bison-Compiler/actions/workflows/pipeline.yaml/badge.svg?branch=production)](https://github.com/agustin-golmar/Flex-Bison-Compiler/actions/workflows/pipeline.yaml)
 
-/* Crear String */
+# CONCAT
 
-String name = "Tomas";
+A base compiler example, developed with Flex and Bison.
 
-/* Interpolación */
+* [Environment](#environment)
+* [CI/CD](#cicd)
+* [Recommended Extensions](#recommended-extensions)
+* Installation
+  * [Docker](doc/readme/Docker.md)
+  * [Microsoft Windows](doc/readme/Windows.md)
+  * [Ubuntu](doc/readme/Ubuntu.md)
 
-String inter = "Hello ${name}";
+## Environment
 
-/* Leer por entrada estándar */
+Set the following environment variables to control and configure the behaviour of the application:
 
-String inputString = INP();
+|Name|Default|Description|
+|-|:-:|-|
+|`LOG_IGNORED_LEXEMES`|`true`|When `true`, logs all of the ignored lexemes found with Flex at DEBUGGING level. To remove those logs from the console output set it to `false`.|
+|`LOGGING_LEVEL`|`INFORMATION`|The minimum level to log in the console output. From lower to higher, the available levels are: `ALL`, `DEBUGGING`, `INFORMATION`, `WARNING`, `ERROR` and `CRITICAL`.|
 
-/* Crear un String aleatorio de largo entre el mínimo y máximo con letras 'a', 'b' y 'c' */
+## CI/CD
 
-String random = RND(minimo, maximo, "abc");
+To trigger an automatic integration on every push or PR (_Pull Request_), you must activate _GitHub Actions_ in the _Settings_ tab. Use the following configuration:
 
-/* Invertir String */
+|Key|Value|
+|-|-|
+|Actions permissions|Allow all actions and reusable workflows|
+|Artifact and log retention|`30 days`|
+|Fork pull request workflows from outside collaborators|Require approval for all outside collaborators|
+|Workflow permissions|Read repository contents and packages permissions|
+|Allow GitHub Actions to create and approve pull requests|`false`|
 
-String reverse = REV("reverse");
+After integration is done, change the badges of this `README.md` to point to the new repository.
 
-/* A mayúscula */
+## Recommended Extensions
 
-String upper = TUP("upper");
-
-/* A minúscula */
-
-String lower = TLO("LOWER");
-
-/* Reemplazar una palabra por otra */
-
-String replace = RPL("Godbye world", "Godbye", "Hello");
-
-/* Crear un número con valor 10 */
-
-Atomic number = 10;
-
-/* Convertir a número la entrada del usuario */
-
-Atomic inputNumber = NUM(INP());
-
-/* Obtener el largo de 'inputString' */
-
-Atomic lenght = LEN(inputString);
-
-/* Encriptar archivo 'data' con la clave en el archivo 'clave' */
-
-Buffer encriptedData = ENC(AES128-CBC, INP("./clave.txt"), INP("./data.txt"));
-
-/* Desencriptar */
-
-Buffer desencriptedData = DEC(AES128-CBC, INP("./clave.txt"), encriptedData);
-
-/* Volcar en el archivo 'myData.txt' el contenido encriptado */
-
-OUT(encriptedData, "myData.txt");
-
-/* LOOP, imprimir por consola el contenido */
-
-FOR(element : desencriptedData)
-	OUT(element);
-END
-
-/* Creación de función */
-
-FUN myFunction()
-
-END
+* [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+* [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
+* [Yash](https://marketplace.visualstudio.com/items?itemName=daohong-emilio.yash)
